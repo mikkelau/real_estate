@@ -5,20 +5,19 @@ Created on Thu May  5 17:51:19 2022
 @author: mikke
 """
 
-from webscraper_utahrealestate import webscraper_utahrealestate
-from webscraper_fmr import webscraper_fmr
+import webscrapers as ws
 
 zipcode = '84044'
 
 # call the utahrealestate webscraper.
 # creates a list of objects of type RentalProperty and fill in:
 # days_on_URE, listing_price, num_beds, sqr_feet, num_baths, MLS_ID
-prop_lst = webscraper_utahrealestate(zipcode)
+prop_lst = ws.utah_re(zipcode)
 
 # call the fair market rent webscraper.
 # creates a dictionary with the following keys: 'Studio', '1-Bedroom', 
 # '2-Bedroom', '3_Bedroom', '4-Bedroom', and possibly higher if needed
-rental_prices = webscraper_fmr(zipcode)
+rental_prices = ws.fmr(zipcode)
 
 # evaluate all current deals to see if anything cashflows        
 for property in prop_lst:
