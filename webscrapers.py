@@ -34,48 +34,66 @@ def utah_re(zipcode):
     
     wait = WebDriverWait(browser,10) # this might not be needed
     
-    wait.until(EC.presence_of_element_located((By.CLASS_NAME,'criteria-wrap')))
-    results = wait.until(EC.presence_of_element_located((By.ID,'results-listings')))
-    wait.until(EC.presence_of_element_located((By.CLASS_NAME,'property___details')))
-    listings = results.find_elements(By.CLASS_NAME,'property___details')
-    prop_lst = [RentalProperty() for _ in range(len(listings))] # '_' indicates that the variable is not important
+    prop_lst = []
     
-    # cycle through all points on the map and get beds, bath, sq feet, and listing price
-    for listing in range(len(listings)):
-        # print(listing.text)
-        lines = listings[listing].text.split('\n')
-        for line in lines:
-            # figure out days on market
-            if 'URE:' in line:
-                URE_line = line.split(':')
-                if 'Just' in URE_line[1]:
-                    prop_lst[listing].days_on_URE = 0
-                else:
-                    prop_lst[listing].days_on_URE = int(URE_line[1])
-            # figure out listing price
-            if '•' in line: # should this be an elif?
-                details_line = line.split('•')
-                for item in details_line:
-                    if '$' in item:
-                        price_part = item.split()
-                        for piece in price_part:
-                            if '$' in piece:
-                                price = piece.strip('$') # get rid of dollar sign
-                                price = price.replace(',','') # get rid of commas
-                                prop_lst[listing].listing_price = int(price)
-                        # figure out number of bedrooms
-                        prop_lst[listing].num_beds = price_part[1]
-                    # figure out square footage
-                    if 'SqFt.' in item: # should this be an elif?
-                        square_feet_part = item.split()
-                        prop_lst[listing].sqr_feet = int(square_feet_part[0])
-                    # figure out number of bathrooms
-                    if 'ba' in item:
-                        baths_part = item.split()
-                        prop_lst[listing].num_baths = int(baths_part[0]) # can this be a decimal? (e.g. 2.5 baths)
-            if 'MLS#' in line:
-                MLS_part = line.split()
-                prop_lst[listing].MLS_ID = MLS_part[1] # can't think of a reason this has to be an int, keep as string for now
+    # while there exists a "Next" button
+    next_button = True
+    while next_button:
+    
+        wait.until(EC.presence_of_element_located((By.CLASS_NAME,'criteria-wrap')))
+        results = wait.until(EC.presence_of_element_located((By.ID,'results-listings')))
+        wait.until(EC.presence_of_element_located((By.CLASS_NAME,'property___details')))
+        listings = results.find_elements(By.CLASS_NAME,'property___details')
+        for item in range(len(listings)):
+            prop_lst.append(RentalProperty())
+    
+        # cycle through all points on the map and get beds, bath, sq feet, and listing price
+        for listing in range(len(listings)):
+            # print(listing.text)
+            lines = listings[listing].text.split('\n')
+            for line in lines:
+                # figure out days on market
+                if 'URE:' in line:
+                    URE_line = line.split(':')
+                    if 'Just' in URE_line[1]:
+                        prop_lst[listing].days_on_URE = 0
+                    else:
+                        prop_lst[listing].days_on_URE = int(URE_line[1])
+                # figure out listing price
+                if '•' in line: # should this be an elif?
+                    details_line = line.split('•')
+                    for item in details_line:
+                        if '$' in item:
+                            price_part = item.split()
+                            for piece in price_part:
+                                if '$' in piece:
+                                    price = piece.strip('$') # get rid of dollar sign
+                                    price = price.replace(',','') # get rid of commas
+                                    prop_lst[listing].listing_price = int(price)
+                            # figure out number of bedrooms
+                            prop_lst[listing].num_beds = price_part[1]
+                        # figure out square footage
+                        if 'SqFt.' in item: # should this be an elif?
+                            square_feet_part = item.split()
+                            prop_lst[listing].sqr_feet = int(square_feet_part[0])
+                        # figure out number of bathrooms
+                        if 'ba' in item:
+                            baths_part = item.split()
+                            prop_lst[listing].num_baths = int(baths_part[0]) # can this be a decimal? (e.g. 2.5 baths)
+                if 'MLS#' in line:
+                    MLS_part = line.split()
+                    prop_lst[listing].MLS_ID = MLS_part[1] # can't think of a reason this has to be an int, keep as string for now
+                    
+        # figure out if there's a next button
+        next_button = browser.find_elements(By.CSS_SELECTOR,'#paginator-wrap > ul > li:nth-child(2) > a')
+        if len(next_button) > 0:
+            # see if the cookie banner is in the way and click it if so
+            close_banner = browser.find_element(By.CLASS_NAME,'cookie-close')
+            if close_banner:
+                close_banner.click()
+                WebDriverWait(browser,1)
+                browser.switch_to.active_element # need to switch back to the active page
+            next_button[0].click()
 
                         
     # click off of all symbols
