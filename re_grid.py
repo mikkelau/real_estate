@@ -19,83 +19,89 @@ class RE_Grid(GridLayout):
         my_property = RentalProperty()
         
         self.cols = 1
+        self.spacing = 10
+        self.padding = 10
     
-        self.inside = GridLayout()
-        self.inside.cols = 2
+        self.inside = GridLayout(cols = 2)
         
-        self.inside.add_widget(Label(text='Property Info'))
-        self.inside.add_widget(Label(text='Rental Info'))
+        self.inside.add_widget(Label(text='Property Info', font_size=40, bold=True))
+        self.inside.add_widget(Label(text='Rental Info', font_size=40, bold=True))
         
-        self.inside_left = GridLayout()
-        self.inside_left.cols = 2
+        self.inside_left = GridLayout(cols=2)
+        self.far_left = GridLayout(cols=1)
+        self.center_left = GridLayout(cols=1, width=100, size_hint=(None,1))
                 
-        self.inside_left.add_widget(Label(text='Annual Property Taxes:'))
+        self.far_left.add_widget(Label(text='Annual Property Taxes:'))
         self.property_taxes = TextInput(multiline=False,text=str(1600.00))
-        self.inside_left.add_widget(self.property_taxes)
+        self.center_left.add_widget(self.property_taxes)
         
-        self.inside_left.add_widget(Label(text='Purchase Price:'))
+        self.far_left.add_widget(Label(text='Purchase Price:'))
         self.purchase_price = TextInput(multiline=False,text=str(300000))
-        self.inside_left.add_widget(self.purchase_price)
+        self.center_left.add_widget(self.purchase_price)
         
-        self.inside_left.add_widget(Label(text='Closing Costs:'))
+        self.far_left.add_widget(Label(text='Closing Costs:'))
         self.closing_costs = TextInput(multiline=False,text=str(3000.00))
-        self.inside_left.add_widget(self.closing_costs)
+        self.center_left.add_widget(self.closing_costs)
         
-        self.inside_left.add_widget(Label(text='Down Payment:'))
+        self.far_left.add_widget(Label(text='Down Payment:'))
         self.down_payment = TextInput(multiline=False,text=str(20000))
-        self.inside_left.add_widget(self.down_payment)
+        self.center_left.add_widget(self.down_payment)
         
-        self.inside_left.add_widget(Label(text='Interest Rate (%):'))
+        self.far_left.add_widget(Label(text='Interest Rate (%):'))
         self.interest_rate = TextInput(multiline=False,text=str(5.5))
-        self.inside_left.add_widget(self.interest_rate)
+        self.center_left.add_widget(self.interest_rate)
         
-        self.inside_left.add_widget(Label(text='Amortization Period (years):'))
+        self.far_left.add_widget(Label(text='Amortization Period (years):'))
         self.amort_period = TextInput(multiline=False,text=str(30))
-        self.inside_left.add_widget(self.amort_period)
+        self.center_left.add_widget(self.amort_period)
         
         self.calculate_mortgage = Button(text="Calculate Mortgage")
         self.mortgage_payment = Label()
-        # self.mortgage_payment = Label(text=str(my_property.mortgage_payment))
         self.calculate_mortgage.bind(on_press = lambda x:self.calculate_mortgage_pressed(self, my_property))
-        self.inside_left.add_widget(self.calculate_mortgage)
-        self.inside_left.add_widget(self.mortgage_payment)
+        self.far_left.add_widget(self.calculate_mortgage)
+        self.center_left.add_widget(self.mortgage_payment)
         
+        self.inside_left.add_widget(self.far_left)
+        self.inside_left.add_widget(self.center_left)
         self.inside.add_widget(self.inside_left)
+
                 
-        self.inside_right = GridLayout()
-        self.inside_right.cols = 2
+        self.inside_right = GridLayout(cols=2)
+        self.center_right = GridLayout(cols=1)
+        self.far_right = GridLayout(cols=1, width=100, size_hint=(None,1))
         
-        self.inside_right.add_widget(Label(text='Gross Monthly Rent:'))
+        self.center_right.add_widget(Label(text='Gross Monthly Rent:'))
         self.gross_rent = TextInput(multiline=False,text=str(1000))
-        self.inside_right.add_widget(self.gross_rent)
+        self.far_right.add_widget(self.gross_rent)
         
-        self.inside_right.add_widget(Label(text='Fixed Landlord Expenses:'))
+        self.center_right.add_widget(Label(text='Fixed Landlord Expenses:'))
         self.fixed_expenses = TextInput(multiline=False,text=str(150))
-        self.inside_right.add_widget(self.fixed_expenses)
+        self.far_right.add_widget(self.fixed_expenses)
         
-        self.inside_right.add_widget(Label(text='Variable Landlord Expenses:'))
+        self.center_right.add_widget(Label(text='Variable Landlord Expenses:'))
         self.variable_expenses = TextInput(multiline=False,text=str(300))
-        self.inside_right.add_widget(self.variable_expenses)
+        self.far_right.add_widget(self.variable_expenses)
         
-        self.inside_right.add_widget(Label(text='Rent Increase per Year (%):'))
+        self.center_right.add_widget(Label(text='Rent Increase per Year (%):'))
         self.yearly_rent_increase = TextInput(multiline=False,text=str(2.0))
-        self.inside_right.add_widget(self.yearly_rent_increase)
+        self.far_right.add_widget(self.yearly_rent_increase)
         
-        self.inside_right.add_widget(Label(text='Expense Increase per Year (%):'))
+        self.center_right.add_widget(Label(text='Expense Increase per Year (%):'))
         self.yearly_expense_increase = TextInput(multiline=False,text=str(2.0))
-        self.inside_right.add_widget(self.yearly_expense_increase)
+        self.far_right.add_widget(self.yearly_expense_increase)
         
-        self.inside_right.add_widget(Label(text='Property Appreciation per Year (%):'))
+        self.center_right.add_widget(Label(text='Property Appreciation per Year (%):'))
         self.yearly_appreciation = TextInput(multiline=False,text=str(2.0))
-        self.inside_right.add_widget(self.yearly_appreciation)
+        self.far_right.add_widget(self.yearly_appreciation)
         
         self.calculate_cashflow = Button(text="Calculate Cashflow")
         self.calculate_cashflow.bind(on_press = lambda x:self.calculate_cashflow_pressed(self, my_property))
         self.monthly_cashflow = Label()
-        # self.monthly_cashflow = Label(text=str(my_property.monthly_cashflow))
-        self.inside_right.add_widget(self.calculate_cashflow)
-        self.inside_right.add_widget(self.monthly_cashflow)
+        self.center_right.add_widget(self.calculate_cashflow)
+        self.far_right.add_widget(self.monthly_cashflow)
         
+        self.inside_right.add_widget(self.center_right)
+        self.inside_right.add_widget(self.far_right)
         self.inside.add_widget(self.inside_right)
 
         self.add_widget(self.inside)
@@ -115,7 +121,7 @@ class RE_Grid(GridLayout):
         
         
         RentalProperty.calculate_mortgage_payment()
-        self.mortgage_payment.text = str(RentalProperty.mortgage_payment)
+        self.mortgage_payment.text = str(round(RentalProperty.mortgage_payment,2))
         
     def calculate_cashflow_pressed(self, instance, RentalProperty):
         RentalProperty.gross_monthly_income = float(self.gross_rent.text)
@@ -126,7 +132,7 @@ class RE_Grid(GridLayout):
         RentalProperty.annual_percent_appreciation = float(self.yearly_appreciation.text)
         
         RentalProperty.calculate_cashflow()
-        self.monthly_cashflow.text = str(RentalProperty.monthly_cashflow)
+        self.monthly_cashflow.text = str(round(RentalProperty.monthly_cashflow,2))
         
     def plot_pressed(self, instance, RentalProperty):
         RentalProperty.plot_income()
