@@ -157,14 +157,14 @@ class Tooltip(Label):
             Color(0.2, 0.2, 0.2)
             self.rect = Rectangle(size=self.texture_size, pos=self.pos)
 
-        self.bind(pos=self.update_rect, texture_size=self.update_rect)
-        self.bind(texture_size=self.on_texture_size)
+        self.bind(pos=self.update_rect)
+        self.bind(pos=self.update_size)
 
     def update_rect(self, *args):
-        self.rect.size = (self.texture_size[0]+5,self.texture_size[1]+5)
         self.rect.pos = self.pos
+        self.rect.size = (self.texture_size[0]+5,self.texture_size[1]+5)
         
-    def on_texture_size(self, *args):
+    def update_size(self, *args):
         self.size = (self.texture_size[0]+5,self.texture_size[1]+5)
     
 
