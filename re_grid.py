@@ -10,6 +10,9 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 import matplotlib.pyplot as plt
+from kivy.core.window import Window
+from kivy.clock import Clock
+from kivy.graphics import Color, Rectangle
 
 class RE_Grid(GridLayout):
     def __init__(self, **kwargs):
@@ -31,7 +34,9 @@ class RE_Grid(GridLayout):
         self.far_left = GridLayout(cols=1)
         self.center_left = GridLayout(cols=1, width=100, size_hint=(None,1))
                 
-        self.far_left.add_widget(Label(text='Annual Property Taxes:'))
+        self.property_taxes_label = MyLabel(helptext='Typically publicly available on county assessor\'s website')
+        self.property_taxes_label.text = 'Annual Property Taxes:'
+        self.far_left.add_widget(self.property_taxes_label)
         self.property_taxes = TextInput(multiline=False,text=str(1600.00))
         self.center_left.add_widget(self.property_taxes)
         
@@ -39,8 +44,10 @@ class RE_Grid(GridLayout):
         self.purchase_price = TextInput(multiline=False,text=str(300000))
         self.center_left.add_widget(self.purchase_price)
         
-        self.far_left.add_widget(Label(text='Closing Costs:'))
-        self.closing_costs = TextInput(multiline=False,text=str(3000.00))
+        self.closing_costs_label = MyLabel(helptext='Typically $1500-$2500')
+        self.closing_costs_label.text = 'Closing Costs:'
+        self.far_left.add_widget(self.closing_costs_label)
+        self.closing_costs = TextInput(multiline=False,text=str(2000.00))
         self.center_left.add_widget(self.closing_costs)
         
         self.far_left.add_widget(Label(text='Down Payment:'))
@@ -71,7 +78,7 @@ class RE_Grid(GridLayout):
         self.far_right = GridLayout(cols=1, width=100, size_hint=(None,1))
         
         self.center_right.add_widget(Label(text='Gross Monthly Rent:'))
-        self.gross_rent = TextInput(multiline=False,text=str(1000))
+        self.gross_rent = TextInput(multiline=False,text=str(2000))
         self.far_right.add_widget(self.gross_rent)
         
         self.center_right.add_widget(Label(text='Fixed Landlord Expenses:'))
@@ -106,7 +113,7 @@ class RE_Grid(GridLayout):
 
         self.add_widget(self.inside)
         
-        self.make_plots = Button(text="Make Plots!", font_size=40)
+        self.make_plots = Button(text="Make Plots!", font_size=40, height=100, size_hint=(1,None))
         self.make_plots.bind(on_press = lambda x:self.plot_pressed(self, my_property))
         self.add_widget(self.make_plots)
         
@@ -138,3 +145,50 @@ class RE_Grid(GridLayout):
         RentalProperty.plot_income()
         RentalProperty.plot_equity()
         plt.show()
+        
+        
+class Tooltip(Label):
+    def __init__(self, **kwargs):
+        super(Tooltip, self).__init__(**kwargs)
+        
+        self.size_hint = (None,None)
+
+        with self.canvas.before:
+            Color(0.2, 0.2, 0.2)
+            self.rect = Rectangle(size=self.texture_size, pos=self.pos)
+
+        self.bind(pos=self.update_rect, texture_size=self.update_rect)
+        self.bind(texture_size=self.on_texture_size)
+
+    def update_rect(self, *args):
+        self.rect.size = (self.texture_size[0]+5,self.texture_size[1]+5)
+        self.rect.pos = self.pos
+        
+    def on_texture_size(self, *args):
+        self.size = (self.texture_size[0]+5,self.texture_size[1]+5)
+    
+
+class MyLabel(Label):
+    def __init__(self, **kwargs):
+        self.helptext = kwargs.pop('helptext')
+        super(MyLabel, self).__init__(**kwargs)
+                
+        Window.bind(mouse_pos=self.on_mouse_pos)
+        
+        self.tooltip = Tooltip(text=self.helptext)
+
+    def on_mouse_pos(self, *args):
+        if not self.get_root_window():
+            return # not sure what this accomplishes
+        pos = args[1]
+        self.tooltip.pos = pos
+        Clock.unschedule(self.display_tooltip) # cancel scheduled event since I moved the cursor
+        self.close_tooltip() # close if it's opened
+        if self.collide_point(*self.to_widget(*pos)):
+            Clock.schedule_once(self.display_tooltip, 0.5)
+
+    def close_tooltip(self, *args):
+        Window.remove_widget(self.tooltip)
+
+    def display_tooltip(self, *args):
+        Window.add_widget(self.tooltip)
