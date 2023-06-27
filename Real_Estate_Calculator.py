@@ -15,8 +15,8 @@ from re_tabs import RE_Tabs
         
 class RE_App(App):
     def build(self):
-        return RE_Grid()
-        # return RE_Tabs()
+        # return RE_Grid()
+        return RE_Tabs()
 
 if __name__ == "__main__":
    # main()
