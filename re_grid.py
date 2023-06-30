@@ -98,6 +98,8 @@ class PropertyInfo(GridLayout):
         super(PropertyInfo, self).__init__(**kwargs)
         
         self.cols=2
+        self.spacing = 10
+        self.padding = 10
         left = GridLayout(cols=1)
         right = GridLayout(cols=1, width=100, size_hint=(None,1))
                 
@@ -155,6 +157,8 @@ class RentalInfo(GridLayout):
         super(RentalInfo, self).__init__(**kwargs)
         
         self.cols=2
+        self.spacing = 10
+        self.padding = 10
         left = GridLayout(cols=1)
         right = GridLayout(cols=1, width=100, size_hint=(None,1))
         
@@ -323,6 +327,8 @@ class FinancialSummary(GridLayout):
         super(FinancialSummary, self).__init__(**kwargs)
         
         self.cols = 1
+        self.spacing = 10
+        self.padding = 10
         
         grid = GridLayout(cols=2)
         
@@ -384,7 +390,7 @@ class FinancialSummary(GridLayout):
 
         self.add_widget(grid)        
         
-        self.make_summary = Button(text="Make Plots!", font_size=40, height=100, size_hint=(1,None))
+        self.make_summary = Button(text="Generate Financial Summary!", font_size=40, height=100, size_hint=(1,None))
         self.make_summary.bind(on_press = lambda x:self.summary_pressed(self, my_property))
         self.add_widget(self.make_summary)
         

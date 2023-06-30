@@ -4,8 +4,6 @@ Created on Thu Apr 21 20:51:57 2022
 
 @author: mikke
 """
-# from kivy.config import Config
-# Config.set('kivy','keyboard_mode','systemanddock')
 from kivy.app import App
 from kivy.core.window import Window
 from re_grid import RE_Grid  
