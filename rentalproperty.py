@@ -35,6 +35,8 @@ class RentalProperty:
         self.mortgage_payment = float('NaN')
         self.monthly_cashflow = float('NaN')
         self.fifty_perc_cashflow = float('NaN')
+        self.net_operating_income = float('NaN')
+        self.monthly_expenses = float('NaN')
 
         
     # The user should set loan amount, interest rate, and amortization period before this gets called
@@ -44,8 +46,10 @@ class RentalProperty:
                                              ((1+self.interest_rate/100/12)**(self.amortization_period*12)-1)
     
     def calculate_cashflow(self):
-        self.monthly_cashflow = self.gross_monthly_income-(self.fixed_landlord_expenses+self.variable_landlord_expenses+self.mortgage_payment+self.prop_taxes/12)
+        self.monthly_expenses = self.fixed_landlord_expenses+self.variable_landlord_expenses+self.mortgage_payment+self.prop_taxes/12
+        self.monthly_cashflow = self.gross_monthly_income-self.monthly_expenses
         self.fifty_perc_cashflow = 0.5*self.gross_monthly_income-self.mortgage_payment
+        self.net_operating_income = 12*(self.gross_monthly_income-(self.monthly_expenses-self.mortgage_payment))
         
     def plot_income(self):
         loan_length = self.amortization_period

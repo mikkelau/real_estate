@@ -166,6 +166,8 @@ class RentalInfo(GridLayout):
         self.gross_rent.bind(text=lambda instance, x:self.update_capex_cost(self))
         self.gross_rent.bind(text=lambda instance, x:self.update_managementfees_cost(self))
         
+        self.monthly_cashflow = Label()
+        
         self.fixed_expenses_label = MyLabel(helptext='Expenses that are predictable or paid every month')
         self.fixed_expenses_label.text = 'Fixed Landlord Expenses:'
         left.add_widget(self.fixed_expenses_label)
@@ -202,7 +204,6 @@ class RentalInfo(GridLayout):
         self.variable_expenses_label.text = 'Variable Landlord Expenses:'
         left.add_widget(self.variable_expenses_label)
         self.total_variable_expenses = Label()
-        # self.variable_expenses = Label(text='300')
         right.add_widget(self.total_variable_expenses)
         
         vacancy = GridLayout(cols=2)
@@ -267,7 +268,6 @@ class RentalInfo(GridLayout):
         
         self.calculate_cashflow = Button(text="Calculate Cashflow")
         self.calculate_cashflow.bind(on_press = lambda x:self.calculate_cashflow_pressed(self, my_property))
-        self.monthly_cashflow = Label()
         left.add_widget(self.calculate_cashflow)
         right.add_widget(self.monthly_cashflow)
         
@@ -279,24 +279,28 @@ class RentalInfo(GridLayout):
             self.vacancy_cost.text = str(round(float(0)))
         else:
             self.vacancy_cost.text = str(round(float(self.gross_rent.text)*float(self.vacancy_percentage.text)/100))
+        self.monthly_cashflow.text = ''
             
     def update_maintenance_cost(self, instance):
         if (self.maintenance_percentage.text == '') or (self.gross_rent.text == ''):
             self.maintenance_cost.text = str(round(float(0)))
         else:
             self.maintenance_cost.text = str(round(float(self.gross_rent.text)*float(self.maintenance_percentage.text)/100))
+        self.monthly_cashflow.text = ''
             
     def update_capex_cost(self, instance):
         if (self.capex_percentage.text == '') or (self.gross_rent.text == ''):
             self.capex_cost.text = str(round(float(0)))
         else:
             self.capex_cost.text = str(round(float(self.gross_rent.text)*float(self.capex_percentage.text)/100))
+        self.monthly_cashflow.text = ''
             
     def update_managementfees_cost(self, instance):
         if (self.managementfees_percentage.text == '') or (self.gross_rent.text == ''):
             self.managementfees_cost.text = str(round(float(0)))
         else:
             self.managementfees_cost.text = str(round(float(self.gross_rent.text)*float(self.managementfees_percentage.text)/100))
+        self.monthly_cashflow.text = ''
         
     def calculate_cashflow_pressed(self, instance, RentalProperty):
         RentalProperty.gross_monthly_income = float(self.gross_rent.text)
@@ -313,6 +317,95 @@ class RentalInfo(GridLayout):
         self.monthly_cashflow.text = str(round(RentalProperty.monthly_cashflow,2))
         self.total_fixed_expenses.text = str(round(RentalProperty.fixed_landlord_expenses,2))
         self.total_variable_expenses.text = str(round(RentalProperty.variable_landlord_expenses,2))
+        
+class FinancialSummary(GridLayout):
+    def __init__(self, my_property, **kwargs):
+        super(FinancialSummary, self).__init__(**kwargs)
+        
+        self.cols = 1
+        
+        grid = GridLayout(cols=2)
+        
+        grid.add_widget(Label(text="Purchase Price:"))
+        self.purchase_price = Label()
+        grid.add_widget(self.purchase_price)
+        
+        grid.add_widget(Label(text="Total Costs:"))
+        self.total_costs = Label()
+        grid.add_widget(self.total_costs)
+        
+        grid.add_widget(Label(text="Loan Amount:"))
+        self.loan_amount = Label()
+        grid.add_widget(self.loan_amount)
+        
+        grid.add_widget(Label(text="Monthly Mortgage Payment:"))
+        self.mortgage_payment = Label()
+        grid.add_widget(self.mortgage_payment)
+        
+        grid.add_widget(Label(text="Gross Monthly Income:"))
+        self.monthly_income = Label()
+        grid.add_widget(self.monthly_income)
+        
+        grid.add_widget(Label(text="Approximate Monthly Expenses:"))
+        self.monthly_expenses = Label()
+        grid.add_widget(self.monthly_expenses)
+        
+        grid.add_widget(Label(text="Monthly Cashflow:"))
+        self.monthly_cashflow = Label()
+        grid.add_widget(self.monthly_cashflow)
+        
+        grid.add_widget(Label(text="Total Cash Needed:"))
+        self.cash_needed = Label()
+        grid.add_widget(self.cash_needed)
+        
+        NOI_label = MyLabel(helptext='Annual Cashflow sans Mortgage Payments')
+        NOI_label.text = 'Net Operating Income (NOI):'
+        grid.add_widget(NOI_label)
+        self.NOI = Label()
+        grid.add_widget(self.NOI)
+        
+        cash_on_cash_ROI_label = MyLabel(helptext='Usually want to see 10-15%, unless there is a good reason to believe the property will appreciate substantially')
+        cash_on_cash_ROI_label.text = 'Cash on Cash Return on Investment (ROI)'
+        grid.add_widget(cash_on_cash_ROI_label)
+        self.cash_on_cash = Label()
+        grid.add_widget(self.cash_on_cash)
+        
+        monthly_cashflow_50pct_label = MyLabel(helptext='Assumes that half of the gross monthly income will go towards things other than the mortgage when evaluating cashflow potential')
+        monthly_cashflow_50pct_label.text = 'Monthly Cashflow (50% Rule):'
+        grid.add_widget(monthly_cashflow_50pct_label)
+        self.monthly_cashflow_50pct = Label()
+        grid.add_widget(self.monthly_cashflow_50pct)
+        
+        income_to_expense_label = MyLabel(helptext='The gross monthly income should be around 2% of the purchase cost')
+        income_to_expense_label.text = 'Income/Expense Ratio (2% Rule):'
+        grid.add_widget(income_to_expense_label)
+        self.income_to_expense = Label()
+        grid.add_widget(self.income_to_expense)
+
+        self.add_widget(grid)        
+        
+        self.make_summary = Button(text="Make Plots!", font_size=40, height=100, size_hint=(1,None))
+        self.make_summary.bind(on_press = lambda x:self.summary_pressed(self, my_property))
+        self.add_widget(self.make_summary)
+        
+    def summary_pressed(self, instance, RentalProperty):
+        self.purchase_price.text = str(round(RentalProperty.purchase_price))
+        self.total_costs.text = str(round(RentalProperty.purchase_price+RentalProperty.closing_costs))
+        self.loan_amount.text = str(round(RentalProperty.loan_amount))
+        self.mortgage_payment.text=str(round(RentalProperty.mortgage_payment))
+        self.monthly_income.text = str(round(RentalProperty.gross_monthly_income))
+        self.monthly_expenses.text = str(round(RentalProperty.monthly_expenses))
+        self.monthly_cashflow.text = str(round(RentalProperty.monthly_cashflow))
+        self.cash_needed.text = str(round(RentalProperty.down_payment+RentalProperty.closing_costs))
+        self.NOI.text = str(round(RentalProperty.net_operating_income))
+        self.cash_on_cash.text = str(round(12*RentalProperty.monthly_cashflow/(RentalProperty.down_payment+RentalProperty.closing_costs)*100))+'%'
+        self.monthly_cashflow_50pct.text = str(round(RentalProperty.gross_monthly_income-(0.5*RentalProperty.gross_monthly_income+RentalProperty.mortgage_payment)))
+        self.income_to_expense.text = str(round(RentalProperty.gross_monthly_income/RentalProperty.purchase_price*100,2))+'%'
+
+        RentalProperty.plot_income()
+        RentalProperty.plot_equity()
+        plt.show()
+        
         
 class RentalInfoSimple(GridLayout):
     def __init__(self, my_property, **kwargs):

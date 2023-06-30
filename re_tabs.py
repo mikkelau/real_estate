@@ -5,10 +5,11 @@ Created on Wed Jun 21 07:40:18 2023
 @author: mikke
 """
 from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
-from re_grid import PropertyInfo
+from re_grid import PropertyInfo, FinancialSummary
 # from re_grid import RentalInfoSimple as RentalInfo
 from re_grid import RentalInfo
 from rentalproperty import RentalProperty
+from kivy.core.window import Window
 
 class RE_Tabs(TabbedPanel):
     def __init__(self, **kwargs):
@@ -16,33 +17,40 @@ class RE_Tabs(TabbedPanel):
         
         self.pos_hint={'center_x': .5, 'center_y': .5}
         self.do_default_tab = False
+        # self.tab_width = Window.size[0]/3
+        # self.tab_width = self.parent.width/3
+        self.tab_width = None
         
         # initialize the RentalProperty class instance
         my_property = RentalProperty()
         
-        tab1 = TabbedPanelItem(text='Property/Loan Info')
-        self.tab1_content = PropertyInfo(my_property)
-        tab1.add_widget(self.tab1_content)
+        # make some lists
+        name_list = ['Property/Loan Info', 'Rental Info', 'Financials & Plots']
+        self.content_list = [PropertyInfo(my_property), RentalInfo(my_property), FinancialSummary(my_property)]
+        tabs = [None]*3
         
-        tab2 = TabbedPanelItem(text='Rental Info')
-        self.tab2_content = RentalInfo(my_property)
+        for i in range(len(tabs)):
+            tabs[i] = TabbedPanelItem(text=name_list[i])
+            tabs[i].width = tabs[i].texture_size[0]
+            # tabs[i].padding_x = 5
+            # tabs[i].size_hint_x = None
+            tabs[i].add_widget(self.content_list[i])
+            
+        self.content_list[0].property_taxes.bind(text=lambda instance, x:self.update_property_taxes(self,my_property))
         self.update_property_taxes(self,my_property)
-        tab2.add_widget(self.tab2_content)
         
-        self.tab1_content.property_taxes.bind(text=lambda instance, x:self.update_property_taxes(self,my_property))
         
-        tab3 = TabbedPanelItem(text='Financials & Plots')
-        
-        self.add_widget(tab1)
-        self.add_widget(tab2)
-        self.add_widget(tab3)
+        for tab in tabs:
+            self.add_widget(tab)
         
     def update_property_taxes(self, instance, RentalProperty):
         # Update the label's text when the variable changes
-        if self.tab1_content.property_taxes.text == '':
+        if self.content_list[0].property_taxes.text == '':
             RentalProperty.prop_taxes = 0.0
         else:
-            RentalProperty.prop_taxes = float(self.tab1_content.property_taxes.text)
+            RentalProperty.prop_taxes = float(self.content_list[0].property_taxes.text)
             
-        self.tab2_content.property_taxes.text = str(round(RentalProperty.prop_taxes/12,2))
-        self.tab2_content.monthly_cashflow.text = ''
+        self.content_list[1].property_taxes.text = str(round(RentalProperty.prop_taxes/12,2))
+        self.content_list[1].monthly_cashflow.text = ''
+        self.content_list[1].total_fixed_expenses.text = ''
+        
