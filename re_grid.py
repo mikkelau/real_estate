@@ -229,7 +229,7 @@ class RentalInfo(GridLayout):
         self.maintenance_label = MyLabel(helptext='Typically 5-10% of rental income depending on age of the unit')
         self.maintenance_label.text = 'Repairs & Maintenance (%)'
         maintenance.add_widget(self.maintenance_label)
-        self.maintenance_percentage = TextInput(multiline=False,text=str(7))
+        self.maintenance_percentage = TextInput(multiline=False,text=str(7.5))
         maintenance.add_widget(self.maintenance_percentage)
         left.add_widget(maintenance)
         self.maintenance_cost = Label()
@@ -240,7 +240,7 @@ class RentalInfo(GridLayout):
         self.capex_label = MyLabel(helptext='Big expenses that need to be saved up for (windows, roof, appliances, plumbing, etc). Typically 5-10% of rental income.')
         self.capex_label.text = 'Capital Expenditures (%)'
         capex.add_widget(self.capex_label)
-        self.capex_percentage = TextInput(multiline=False,text=str(7))
+        self.capex_percentage = TextInput(multiline=False,text=str(7.5))
         capex.add_widget(self.capex_percentage)
         left.add_widget(capex)
         self.capex_cost = Label()
@@ -251,7 +251,7 @@ class RentalInfo(GridLayout):
         self.managementfees_label = MyLabel(helptext='Typically 10% of rental income.')
         self.managementfees_label.text = 'Management Fees (%)'
         managementfees.add_widget(self.managementfees_label)
-        self.managementfees_percentage = TextInput(multiline=False,text=str(7))
+        self.managementfees_percentage = TextInput(multiline=False,text=str(10))
         managementfees.add_widget(self.managementfees_percentage)
         left.add_widget(managementfees)
         self.managementfees_cost = Label()
@@ -425,7 +425,7 @@ class FinancialSummary(GridLayout):
         self.monthly_cashflow.text = str(round(RentalProperty.monthly_cashflow))
         self.cash_needed.text = str(round(RentalProperty.down_payment+RentalProperty.closing_costs))
         self.NOI.text = str(round(RentalProperty.net_operating_income))
-        self.cash_on_cash.text = str(round(12*RentalProperty.monthly_cashflow/(RentalProperty.down_payment+RentalProperty.closing_costs)*100))+'%'
+        self.cash_on_cash.text = str(round(12*RentalProperty.monthly_cashflow/(RentalProperty.down_payment+RentalProperty.closing_costs)*100,2))+'%'
         self.monthly_cashflow_50pct.text = str(round(RentalProperty.gross_monthly_income-(0.5*RentalProperty.gross_monthly_income+RentalProperty.mortgage_payment)))
         self.income_to_expense.text = str(round(RentalProperty.gross_monthly_income/RentalProperty.purchase_price*100,2))+'%'
 

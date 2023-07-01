@@ -45,7 +45,7 @@ class RE_Tabs(TabbedPanel):
     def update_property_taxes(self, instance, RentalProperty):
         # Update the label's text when the variable changes
         if self.content_list[0].property_taxes.text == '':
-            self.content_list[1].property_taxes.text = 0
+            self.content_list[1].property_taxes.text = str(round(float(0)))
         else:
             self.content_list[1].property_taxes.text = str(round(float(self.content_list[0].property_taxes.text)/12,2))
             
