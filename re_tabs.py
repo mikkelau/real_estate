@@ -35,7 +35,9 @@ class RE_Tabs(TabbedPanel):
             tabs[i].add_widget(self.content_list[i])
             
         self.content_list[0].property_taxes.bind(text=lambda instance, x:self.update_property_taxes(self,my_property))
+        self.content_list[0].mortgage_payment.bind(text=lambda instance, x:self.update_property_taxes(self,my_property))
         self.update_property_taxes(self,my_property)
+        
         
         for tab in tabs:
             self.add_widget(tab)
@@ -43,11 +45,10 @@ class RE_Tabs(TabbedPanel):
     def update_property_taxes(self, instance, RentalProperty):
         # Update the label's text when the variable changes
         if self.content_list[0].property_taxes.text == '':
-            RentalProperty.prop_taxes = 0.0
+            self.content_list[1].property_taxes.text = 0
         else:
-            RentalProperty.prop_taxes = float(self.content_list[0].property_taxes.text)
+            self.content_list[1].property_taxes.text = str(round(float(self.content_list[0].property_taxes.text)/12,2))
             
-        self.content_list[1].property_taxes.text = str(round(RentalProperty.prop_taxes/12,2))
         self.content_list[1].monthly_cashflow.text = ''
-        self.content_list[1].total_fixed_expenses.text = ''
+        self.content_list[1].update_fixed_expenses(self.content_list[1])
         
