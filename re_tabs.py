@@ -34,21 +34,21 @@ class RE_Tabs(TabbedPanel):
             tabs[i].size_hint_x = None
             tabs[i].add_widget(self.content_list[i])
             
-        self.content_list[0].property_taxes.bind(text=lambda instance, x:self.update_property_taxes(self,my_property))
-        self.content_list[0].mortgage_payment.bind(text=lambda instance, x:self.update_property_taxes(self,my_property))
-        self.update_property_taxes(self,my_property)
+        self.content_list[0].property_taxes.bind(text=lambda instance, x:self.update_property_taxes(self))
+        self.content_list[0].mortgage_payment.bind(text=lambda instance, x:self.update_property_taxes(self))
+        self.update_property_taxes(self)
         
-        
+        self.content_list[1].monthly_cashflow.bind(text=lambda instance, x:self.content_list[2].clear_summary(self.content_list[2]))
+
         for tab in tabs:
             self.add_widget(tab)
         
-    def update_property_taxes(self, instance, RentalProperty):
-        # Update the label's text when the variable changes
+    def update_property_taxes(self, instance):
+        # Update the monthly property tax text when annual property tax changes
         if self.content_list[0].property_taxes.text == '':
             self.content_list[1].property_taxes.text = str(round(float(0)))
         else:
             self.content_list[1].property_taxes.text = str(round(float(self.content_list[0].property_taxes.text)/12,2))
             
-        self.content_list[1].monthly_cashflow.text = ''
+        # update estimation of fixed expenses with new property tax value. This also clears cashflow estimate
         self.content_list[1].update_fixed_expenses(self.content_list[1])
-        

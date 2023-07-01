@@ -107,28 +107,48 @@ class PropertyInfo(GridLayout):
         self.property_taxes_label.text = 'Annual Property Taxes:'
         left.add_widget(self.property_taxes_label)
         self.property_taxes = TextInput(multiline=False,text=str(1600.00))
+        self.property_taxes.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.property_taxes)
         
         left.add_widget(Label(text='Purchase Price:'))
         self.purchase_price = TextInput(multiline=False,text=str(300000))
+        self.purchase_price.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.purchase_price)
+        
+        self.property_value_label = MyLabel(helptext='Property may be worth more (or less) than what you paid for it')
+        self.property_value_label.text = 'Property Value:'
+        left.add_widget(self.property_value_label)
+        self.property_value = TextInput(multiline=False,text=str(300000))
+        self.property_value.bind(text=lambda instance, x:self.clear_mortgage(self))
+        right.add_widget(self.property_value)
         
         self.closing_costs_label = MyLabel(helptext='Typically $1500-$2500')
         self.closing_costs_label.text = 'Closing Costs:'
         left.add_widget(self.closing_costs_label)
         self.closing_costs = TextInput(multiline=False,text=str(2000.00))
+        self.closing_costs.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.closing_costs)
+        
+        self.repair_costs_label = MyLabel(helptext='Generally properties need some immediate small repairs before renting')
+        self.repair_costs_label.text = 'Estimated Repair Costs:'
+        left.add_widget(self.repair_costs_label)
+        self.repair_costs = TextInput(multiline=False,text=str(2000.00))
+        self.repair_costs.bind(text=lambda instance, x:self.clear_mortgage(self))
+        right.add_widget(self.repair_costs)
         
         left.add_widget(Label(text='Down Payment:'))
         self.down_payment = TextInput(multiline=False,text=str(20000))
+        self.down_payment.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.down_payment)
         
         left.add_widget(Label(text='Interest Rate (%):'))
         self.interest_rate = TextInput(multiline=False,text=str(5.5))
+        self.interest_rate.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.interest_rate)
         
         left.add_widget(Label(text='Amortization Period (years):'))
         self.amort_period = TextInput(multiline=False,text=str(30))
+        self.amort_period.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.amort_period)
         
         self.calculate_mortgage = Button(text="Calculate Mortgage")
@@ -139,12 +159,17 @@ class PropertyInfo(GridLayout):
         
         self.add_widget(left)
         self.add_widget(right)
+    
+    def clear_mortgage(self, instance):
+        self.mortgage_payment.text = ''
         
     def calculate_mortgage_pressed(self, instance, RentalProperty):
         # set the variables in the class using the text inputs
         RentalProperty.prop_taxes = float(self.property_taxes.text)
         RentalProperty.purchase_price = float(self.purchase_price.text)
+        RentalProperty.property_value = float(self.property_value.text)
         RentalProperty.closing_costs = float(self.closing_costs.text)
+        RentalProperty.repair_costs = float(self.repair_costs.text)
         RentalProperty.down_payment = float(self.down_payment.text)
         RentalProperty.interest_rate = float(self.interest_rate.text)
         RentalProperty.amortization_period = int(self.amort_period.text)
@@ -409,30 +434,49 @@ class FinancialSummary(GridLayout):
         self.income_to_expense = Label()
         grid.add_widget(self.income_to_expense)
 
-        self.add_widget(grid)        
-        
-        self.make_summary = Button(text="Generate Financial Summary!", font_size=40, height=100, size_hint=(1,None))
+        # add buttons        
+        self.make_summary = Button(text="Generate Financial Summary!", font_size=20, height=100, size_hint=(1,None))
         self.make_summary.bind(on_press = lambda x:self.summary_pressed(self, my_property))
-        self.add_widget(self.make_summary)
+        grid.add_widget(self.make_summary)
+        
+        self.make_plots = Button(text="Generate Plots!", font_size=20, height=100, size_hint=(1,None))
+        self.make_plots.bind(on_press = lambda x:self.plots_pressed(self, my_property))
+        grid.add_widget(self.make_plots)
+        
+        self.add_widget(grid)   
+        
+    def clear_summary(self,instance):
+        self.purchase_price.text = ''
+        self.total_costs.text = ''
+        self.loan_amount.text = ''
+        self.mortgage_payment.text = ''
+        self.monthly_income.text = ''
+        self.monthly_expenses.text = ''
+        self.monthly_cashflow.text = ''
+        self.cash_needed.text = ''
+        self.NOI.text = ''
+        self.cash_on_cash.text = ''
+        self.monthly_cashflow_50pct.text = ''
+        self.income_to_expense.text = ''
         
     def summary_pressed(self, instance, RentalProperty):
         self.purchase_price.text = str(round(RentalProperty.purchase_price))
-        self.total_costs.text = str(round(RentalProperty.purchase_price+RentalProperty.closing_costs))
+        self.total_costs.text = str(round(RentalProperty.purchase_price+RentalProperty.closing_costs+RentalProperty.repair_costs))
         self.loan_amount.text = str(round(RentalProperty.loan_amount))
         self.mortgage_payment.text=str(round(RentalProperty.mortgage_payment))
         self.monthly_income.text = str(round(RentalProperty.gross_monthly_income))
-        self.monthly_expenses.text = str(round(RentalProperty.monthly_expenses))
-        self.monthly_cashflow.text = str(round(RentalProperty.monthly_cashflow))
-        self.cash_needed.text = str(round(RentalProperty.down_payment+RentalProperty.closing_costs))
+        self.monthly_expenses.text = str(round(RentalProperty.monthly_expenses,2))
+        self.monthly_cashflow.text = str(round(RentalProperty.monthly_cashflow,2))
+        self.cash_needed.text = str(round(RentalProperty.down_payment+RentalProperty.closing_costs+RentalProperty.repair_costs))
         self.NOI.text = str(round(RentalProperty.net_operating_income))
-        self.cash_on_cash.text = str(round(12*RentalProperty.monthly_cashflow/(RentalProperty.down_payment+RentalProperty.closing_costs)*100,2))+'%'
-        self.monthly_cashflow_50pct.text = str(round(RentalProperty.gross_monthly_income-(0.5*RentalProperty.gross_monthly_income+RentalProperty.mortgage_payment)))
+        self.cash_on_cash.text = str(round(12*RentalProperty.monthly_cashflow/(RentalProperty.down_payment+RentalProperty.closing_costs+RentalProperty.repair_costs)*100,2))+'%'
+        self.monthly_cashflow_50pct.text = str(round(RentalProperty.gross_monthly_income-(0.5*RentalProperty.gross_monthly_income+RentalProperty.mortgage_payment),2))
         self.income_to_expense.text = str(round(RentalProperty.gross_monthly_income/RentalProperty.purchase_price*100,2))+'%'
-
+        
+    def plots_pressed(self, instance, RentalProperty):
         RentalProperty.plot_income()
         RentalProperty.plot_equity()
         plt.show()
-        
         
 class RentalInfoSimple(GridLayout):
     def __init__(self, my_property, **kwargs):

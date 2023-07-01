@@ -12,7 +12,9 @@ class RentalProperty:
         # set by the user
         self.prop_taxes = float('NaN')
         self.purchase_price = float('NaN')
+        self.property_value = float('NaN')
         self.closing_costs = float('NaN')
+        self.repair_costs = float('NaN')
         self.down_payment = float('NaN')
         self.interest_rate = float('NaN') # this should be in percent (i.e. 3.5 means 3.5% interest)
         self.amortization_period = float('NaN')
@@ -93,7 +95,7 @@ class RentalProperty:
         equity = ['NaN']*(loan_length+2)
         total_profit = ['NaN']*(loan_length+2)
         for year in range(loan_length+2):
-           property_value[year] = self.purchase_price*(1+self.annual_percent_appreciation/100)**(year-1)
+           property_value[year] = self.property_value*(1+self.annual_percent_appreciation/100)**(year-1)
            loan_balance[year] = max(0,self.loan_amount*(((1+self.interest_rate/100/12)**(loan_length*12))-
                                                                   ((1+self.interest_rate/100/12)**(year*12)))/
                                                                  (((1+self.interest_rate/100/12)**(loan_length*12))-1))
@@ -108,7 +110,7 @@ class RentalProperty:
         plt.plot([year for year in range(loan_length+2)],property_value, label = 'Property Value')
         plt.plot([year for year in range(loan_length+2)],loan_balance, label = 'Loan Balance')
         plt.plot([year for year in range(loan_length+2)],equity, label = 'Equity')
-        plt.plot([year for year in range(loan_length+2)],total_profit, label = 'Total Profit')
+        plt.plot([year for year in range(loan_length+2)],total_profit, label = 'Total Rental Profit')
         plt.legend()
         plt.xlabel('Years Since Purchase')
         plt.ylabel('USD')
