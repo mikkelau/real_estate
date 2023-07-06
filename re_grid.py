@@ -101,7 +101,7 @@ class PropertyInfo(GridLayout):
         self.spacing = 10
         self.padding = 10
         left = GridLayout(cols=1)
-        right = GridLayout(cols=1, width=100, size_hint=(None,1))
+        right = GridLayout(cols=1, size_hint=(0.25,1))
                 
         self.property_taxes_label = MyLabel(helptext='Typically publicly available on county assessor\'s website')
         self.property_taxes_label.text = 'Annual Property Taxes:'
@@ -175,7 +175,7 @@ class PropertyInfo(GridLayout):
         RentalProperty.amortization_period = int(self.amort_period.text)
         
         RentalProperty.calculate_mortgage_payment()
-        self.mortgage_payment.text = str(round(RentalProperty.mortgage_payment,2))
+        self.mortgage_payment.text = "${:,.2f}".format(RentalProperty.mortgage_payment)    
         
 class RentalInfo(GridLayout):
     def __init__(self, my_property, **kwargs):
@@ -185,7 +185,10 @@ class RentalInfo(GridLayout):
         self.spacing = 10
         self.padding = 10
         left = GridLayout(cols=1)
-        right = GridLayout(cols=1, width=100, size_hint=(None,1))
+        right = GridLayout(cols=1, size_hint=(0.25,1))
+        
+        percentage_hint = 0.2
+        cost_hint = 0.33
         
         left.add_widget(Label(text='Gross Monthly Rent:'))
         self.gross_rent = TextInput(multiline=False,text=str(2000))
@@ -194,94 +197,126 @@ class RentalInfo(GridLayout):
         
         self.monthly_cashflow = Label()
         
+        prop_taxes = GridLayout(cols=2)
+        self.property_taxes_label = MyLabel(helptext='Previously calculated')
+        self.property_taxes_label.text = 'Property Taxes:'
+        prop_taxes.add_widget(self.property_taxes_label)
+        self.property_taxes = Label()
+        self.property_taxes.size_hint_x = cost_hint
+        self.property_taxes.bind(text=lambda instance, x:self.update_fixed_expenses(self))
+        prop_taxes.add_widget(self.property_taxes)
+        left.add_widget(prop_taxes)
+        right.add_widget(Label())
+
+        services = GridLayout(cols=2)
+        self.services_label = MyLabel(helptext='Electricity, Water, Gas, Sewer, Garbage, etc.')
+        self.services_label.text = 'Services/Utilities:'
+        services.add_widget(self.services_label)
+        self.services_expenses = TextInput(multiline=False,text=str(150))
+        self.services_expenses.size_hint_x = cost_hint
+        self.services_expenses.bind(text=lambda instance, x:self.update_fixed_expenses(self))
+        services.add_widget(self.services_expenses)
+        left.add_widget(services)
+        right.add_widget(Label())
+        
+        hoa = GridLayout(cols=2)
+        hoa.add_widget(Label(text='HOA:'))
+        self.hoa_expenses = TextInput(multiline=False,text=str(0))
+        self.hoa_expenses.size_hint_x = cost_hint
+        self.hoa_expenses.bind(text=lambda instance, x:self.update_fixed_expenses(self))
+        hoa.add_widget(self.hoa_expenses)
+        left.add_widget(hoa)
+        right.add_widget(Label())
+        
+        insurance = GridLayout(cols=2)
+        insurance.add_widget(Label(text='Home Owner''s Insurance:'))
+        self.home_insurance = TextInput(multiline=False,text=str(100))
+        self.home_insurance.size_hint_x = cost_hint
+        self.home_insurance.bind(text=lambda instance, x:self.update_fixed_expenses(self))
+        insurance.add_widget(self.home_insurance)
+        left.add_widget(insurance)
+        right.add_widget(Label())
+        
+        other = GridLayout(cols=2)
+        self.other_expenses_label = MyLabel(helptext='Snow removal, lawn care, flood insurance, etc.')
+        self.other_expenses_label.text = 'Other:'
+        other.add_widget(self.other_expenses_label)
+        self.other_expenses = TextInput(multiline=False,text=str(0))
+        self.other_expenses.size_hint_x = cost_hint
+        self.other_expenses.bind(text=lambda instance, x:self.update_fixed_expenses(self))
+        other.add_widget(self.other_expenses)
+        left.add_widget(other)
+        right.add_widget(Label())
+        
         self.fixed_expenses_label = MyLabel(helptext='Expenses that are predictable or paid every month')
-        self.fixed_expenses_label.text = 'Fixed Landlord Expenses:'
+        self.fixed_expenses_label.text = 'Total Fixed Landlord Expenses:'
         left.add_widget(self.fixed_expenses_label)
         self.total_fixed_expenses = Label()
         right.add_widget(self.total_fixed_expenses)
         
-        self.property_taxes_label = MyLabel(helptext='Previously calculated')
-        self.property_taxes_label.text = 'Property Taxes:'
-        left.add_widget(self.property_taxes_label)
-        self.property_taxes = Label()
-        self.property_taxes.bind(text=lambda instance, x:self.update_fixed_expenses(self))
-        right.add_widget(self.property_taxes)
-
-        self.services_label = MyLabel(helptext='Electricity, Water, Gas, Sewer, Garbage, etc.')
-        self.services_label.text = 'Services/Utilities:'
-        left.add_widget(self.services_label)
-        self.services_expenses = TextInput(multiline=False,text=str(150))
-        self.services_expenses.bind(text=lambda instance, x:self.update_fixed_expenses(self))
-        right.add_widget(self.services_expenses)
-        
-        left.add_widget(Label(text='HOA:'))
-        self.hoa_expenses = TextInput(multiline=False,text=str(0))
-        self.hoa_expenses.bind(text=lambda instance, x:self.update_fixed_expenses(self))
-        right.add_widget(self.hoa_expenses)
-        
-        left.add_widget(Label(text='Home Owner''s Insurance:'))
-        self.home_insurance = TextInput(multiline=False,text=str(100))
-        self.home_insurance.bind(text=lambda instance, x:self.update_fixed_expenses(self))
-        right.add_widget(self.home_insurance)
-        
-        self.other_expenses_label = MyLabel(helptext='Snow removal, lawn care, flood insurance, etc.')
-        self.other_expenses_label.text = 'Other:'
-        left.add_widget(self.other_expenses_label)
-        self.other_expenses = TextInput(multiline=False,text=str(0))
-        self.other_expenses.bind(text=lambda instance, x:self.update_fixed_expenses(self))
-        right.add_widget(self.other_expenses)
-        
         self.update_fixed_expenses(self)
         
-        self.variable_expenses_label = MyLabel(helptext='Expenses that occur unexpectedly')
-        self.variable_expenses_label.text = 'Variable Landlord Expenses:'
-        left.add_widget(self.variable_expenses_label)
-        self.total_variable_expenses = Label()
-        right.add_widget(self.total_variable_expenses)
-        
-        vacancy = GridLayout(cols=2)
+        vacancy = GridLayout(cols=3)
         self.vacancy_label = MyLabel(helptext = 'Typically 3-7% of rental income depending on desirability and location')
         self.vacancy_label.text = 'Vacancy (%)'
         vacancy.add_widget(self.vacancy_label)
         self.vacancy_percentage = TextInput(multiline=False,text=str(5))
+        self.vacancy_percentage.size_hint_x = percentage_hint
         vacancy.add_widget(self.vacancy_percentage)
-        left.add_widget(vacancy)
         self.vacancy_cost = Label()
+        self.vacancy_cost.size_hint_x = cost_hint
         self.vacancy_percentage.bind(text=lambda instance, x:self.update_variable_expenses(self))
-        right.add_widget(self.vacancy_cost)
+        vacancy.add_widget(self.vacancy_cost)
+        left.add_widget(vacancy)
+        right.add_widget(Label())
         
-        maintenance = GridLayout(cols=2)
+        maintenance = GridLayout(cols=3)
         self.maintenance_label = MyLabel(helptext='Typically 5-10% of rental income depending on age of the unit')
         self.maintenance_label.text = 'Repairs & Maintenance (%)'
         maintenance.add_widget(self.maintenance_label)
         self.maintenance_percentage = TextInput(multiline=False,text=str(7.5))
+        self.maintenance_percentage.size_hint_x = percentage_hint
         maintenance.add_widget(self.maintenance_percentage)
-        left.add_widget(maintenance)
         self.maintenance_cost = Label()
+        self.maintenance_cost.size_hint_x = cost_hint
         self.maintenance_percentage.bind(text=lambda instance, x:self.update_variable_expenses(self))
-        right.add_widget(self.maintenance_cost)
+        maintenance.add_widget(self.maintenance_cost)
+        left.add_widget(maintenance)
+        right.add_widget(Label())
         
-        capex = GridLayout(cols=2)
+        capex = GridLayout(cols=3)
         self.capex_label = MyLabel(helptext='Big expenses that need to be saved up for (windows, roof, appliances, plumbing, etc). Typically 5-10% of rental income.')
         self.capex_label.text = 'Capital Expenditures (%)'
         capex.add_widget(self.capex_label)
         self.capex_percentage = TextInput(multiline=False,text=str(7.5))
+        self.capex_percentage.size_hint_x = percentage_hint
         capex.add_widget(self.capex_percentage)
-        left.add_widget(capex)
         self.capex_cost = Label()
+        self.capex_cost.size_hint_x = cost_hint
         self.capex_percentage.bind(text=lambda instance, x:self.update_variable_expenses(self))
-        right.add_widget(self.capex_cost)
+        capex.add_widget(self.capex_cost)
+        left.add_widget(capex)
+        right.add_widget(Label())
         
-        managementfees = GridLayout(cols=2)
+        managementfees = GridLayout(cols=3)
         self.managementfees_label = MyLabel(helptext='Typically 10% of rental income.')
         self.managementfees_label.text = 'Management Fees (%)'
         managementfees.add_widget(self.managementfees_label)
         self.managementfees_percentage = TextInput(multiline=False,text=str(10))
+        self.managementfees_percentage.size_hint_x = percentage_hint
         managementfees.add_widget(self.managementfees_percentage)
-        left.add_widget(managementfees)
         self.managementfees_cost = Label()
+        self.managementfees_cost.size_hint_x = cost_hint
         self.managementfees_percentage.bind(text=lambda instance, x:self.update_variable_expenses(self))
-        right.add_widget(self.managementfees_cost)
+        managementfees.add_widget(self.managementfees_cost)
+        left.add_widget(managementfees)
+        right.add_widget(Label())
+        
+        self.variable_expenses_label = MyLabel(helptext='Expenses that occur unexpectedly')
+        self.variable_expenses_label.text = 'Total Variable Landlord Expenses:'
+        left.add_widget(self.variable_expenses_label)
+        self.total_variable_expenses = Label()
+        right.add_widget(self.total_variable_expenses)
         
         self.update_variable_expenses(self)
         
@@ -326,30 +361,30 @@ class RentalInfo(GridLayout):
         else:
             self.managementfees_cost.text = str(round(float(self.gross_rent.text)*float(self.managementfees_percentage.text)/100))
             
-        self.total_variable_expenses.text =  str(round(sum([float(self.vacancy_cost.text), float(self.maintenance_cost.text),
-                                                            float(self.capex_cost.text), float(self.managementfees_cost.text)]),2))
+        self.total_variable_expenses.text =  "${:,.2f}".format(sum([float(self.vacancy_cost.text), float(self.maintenance_cost.text),
+                                                            float(self.capex_cost.text), float(self.managementfees_cost.text)]))
         self.monthly_cashflow.text = ''
         
     def update_fixed_expenses(self, instance):
         if (self.services_expenses.text == ''):
-            self.total_fixed_expenses.text = str(round(sum([float(self.hoa_expenses.text),float(self.home_insurance.text), 
-                                                            float(self.property_taxes.text),float(self.other_expenses.text)]),2))
+            self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.hoa_expenses.text),float(self.home_insurance.text), 
+                                                            float(self.property_taxes.text),float(self.other_expenses.text)]))
         elif (self.hoa_expenses.text == ''):
-            self.total_fixed_expenses.text = str(round(sum([float(self.services_expenses.text),float(self.home_insurance.text), 
-                                                            float(self.property_taxes.text),float(self.other_expenses.text)]),2))
+            self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text),float(self.home_insurance.text), 
+                                                            float(self.property_taxes.text),float(self.other_expenses.text)]))
         elif (self.home_insurance.text == ''):
-            self.total_fixed_expenses.text = str(round(sum([float(self.services_expenses.text),float(self.hoa_expenses.text), 
-                                                            float(self.property_taxes.text),float(self.other_expenses.text)]),2))
+            self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text),float(self.hoa_expenses.text), 
+                                                            float(self.property_taxes.text),float(self.other_expenses.text)]))
         elif (self.property_taxes.text == ''):
-            self.total_fixed_expenses.text = str(round(sum([float(self.services_expenses.text),float(self.hoa_expenses.text), 
-                                                            float(self.home_insurance.text),float(self.other_expenses.text)]),2))
+            self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text),float(self.hoa_expenses.text), 
+                                                            float(self.home_insurance.text),float(self.other_expenses.text)]))
         elif (self.other_expenses.text == ''):
-            self.total_fixed_expenses.text = str(round(sum([float(self.services_expenses.text),float(self.hoa_expenses.text), 
-                                                            float(self.home_insurance.text),float(self.property_taxes.text)]),2))
+            self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text),float(self.hoa_expenses.text), 
+                                                            float(self.home_insurance.text),float(self.property_taxes.text)]))
         else:
-            self.total_fixed_expenses.text = str(round(sum([float(self.services_expenses.text), float(self.hoa_expenses.text),
+            self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text), float(self.hoa_expenses.text),
                                                             float(self.home_insurance.text), float(self.property_taxes.text),
-                                                            float(self.other_expenses.text)]),2))
+                                                            float(self.other_expenses.text)]))
         self.monthly_cashflow.text = ''
         
     def calculate_cashflow_pressed(self, instance, RentalProperty):
@@ -364,9 +399,9 @@ class RentalInfo(GridLayout):
         RentalProperty.annual_percent_appreciation = float(self.yearly_appreciation.text)
         
         RentalProperty.calculate_cashflow()
-        self.monthly_cashflow.text = str(round(RentalProperty.monthly_cashflow,2))
-        self.total_fixed_expenses.text = str(round(RentalProperty.fixed_landlord_expenses,2))
-        self.total_variable_expenses.text = str(round(RentalProperty.variable_landlord_expenses,2))
+        self.monthly_cashflow.text = "${:,.2f}".format(RentalProperty.monthly_cashflow)
+        self.total_fixed_expenses.text = "${:,.2f}".format(RentalProperty.fixed_landlord_expenses)
+        self.total_variable_expenses.text = "${:,.2f}".format(RentalProperty.variable_landlord_expenses)
         
 class FinancialSummary(GridLayout):
     def __init__(self, my_property, **kwargs):
@@ -378,72 +413,78 @@ class FinancialSummary(GridLayout):
         
         grid = GridLayout(cols=2)
         
-        grid.add_widget(Label(text="Purchase Price:"))
+        left = GridLayout(cols=1)
+        right = GridLayout(cols=1, size_hint=(0.25,1))
+        
+        left.add_widget(Label(text="Purchase Price:"))
         self.purchase_price = Label()
-        grid.add_widget(self.purchase_price)
+        right.add_widget(self.purchase_price)
         
-        grid.add_widget(Label(text="Total Costs:"))
+        left.add_widget(Label(text="Total Costs:"))
         self.total_costs = Label()
-        grid.add_widget(self.total_costs)
+        right.add_widget(self.total_costs)
         
-        grid.add_widget(Label(text="Loan Amount:"))
+        left.add_widget(Label(text="Loan Amount:"))
         self.loan_amount = Label()
-        grid.add_widget(self.loan_amount)
+        right.add_widget(self.loan_amount)
         
-        grid.add_widget(Label(text="Monthly Mortgage Payment:"))
+        left.add_widget(Label(text="Monthly Mortgage Payment:"))
         self.mortgage_payment = Label()
-        grid.add_widget(self.mortgage_payment)
+        right.add_widget(self.mortgage_payment)
         
-        grid.add_widget(Label(text="Gross Monthly Income:"))
+        left.add_widget(Label(text="Gross Monthly Income:"))
         self.monthly_income = Label()
-        grid.add_widget(self.monthly_income)
+        right.add_widget(self.monthly_income)
         
-        grid.add_widget(Label(text="Approximate Monthly Expenses:"))
+        left.add_widget(Label(text="Approximate Monthly Expenses:"))
         self.monthly_expenses = Label()
-        grid.add_widget(self.monthly_expenses)
+        right.add_widget(self.monthly_expenses)
         
-        grid.add_widget(Label(text="Monthly Cashflow:"))
+        left.add_widget(Label(text="Monthly Cashflow:"))
         self.monthly_cashflow = Label()
-        grid.add_widget(self.monthly_cashflow)
+        right.add_widget(self.monthly_cashflow)
         
-        grid.add_widget(Label(text="Total Cash Needed:"))
+        left.add_widget(Label(text="Total Cash Needed:"))
         self.cash_needed = Label()
-        grid.add_widget(self.cash_needed)
+        right.add_widget(self.cash_needed)
         
         NOI_label = MyLabel(helptext='Annual Cashflow sans Mortgage Payments')
         NOI_label.text = 'Net Operating Income (NOI):'
-        grid.add_widget(NOI_label)
+        left.add_widget(NOI_label)
         self.NOI = Label()
-        grid.add_widget(self.NOI)
+        right.add_widget(self.NOI)
         
         cash_on_cash_ROI_label = MyLabel(helptext='Usually want to see 10-15%, unless there is a good reason to believe the property will appreciate substantially')
         cash_on_cash_ROI_label.text = 'Cash on Cash Return on Investment (ROI)'
-        grid.add_widget(cash_on_cash_ROI_label)
+        left.add_widget(cash_on_cash_ROI_label)
         self.cash_on_cash = Label()
-        grid.add_widget(self.cash_on_cash)
+        right.add_widget(self.cash_on_cash)
         
         monthly_cashflow_50pct_label = MyLabel(helptext='Assumes that half of the gross monthly income will go towards things other than the mortgage when evaluating cashflow potential')
         monthly_cashflow_50pct_label.text = 'Monthly Cashflow (50% Rule):'
-        grid.add_widget(monthly_cashflow_50pct_label)
+        left.add_widget(monthly_cashflow_50pct_label)
         self.monthly_cashflow_50pct = Label()
-        grid.add_widget(self.monthly_cashflow_50pct)
+        right.add_widget(self.monthly_cashflow_50pct)
         
         income_to_expense_label = MyLabel(helptext='The gross monthly income should be around 2% of the purchase cost')
         income_to_expense_label.text = 'Income/Expense Ratio (2% Rule):'
-        grid.add_widget(income_to_expense_label)
+        left.add_widget(income_to_expense_label)
         self.income_to_expense = Label()
-        grid.add_widget(self.income_to_expense)
+        right.add_widget(self.income_to_expense)
+
+        grid.add_widget(left)   
+        grid.add_widget(right) 
+        
+        self.add_widget(grid)
 
         # add buttons        
-        self.make_summary = Button(text="Generate Financial Summary!", font_size=20, height=100, size_hint=(1,None))
+        self.make_summary = Button(text="Generate Financial Summary!", font_size=20, height=60, size_hint=(1,None))
         self.make_summary.bind(on_press = lambda x:self.summary_pressed(self, my_property))
-        grid.add_widget(self.make_summary)
+        self.add_widget(self.make_summary)
         
-        self.make_plots = Button(text="Generate Plots!", font_size=20, height=100, size_hint=(1,None))
+        self.make_plots = Button(text="Generate Plots!", font_size=20, height=60, size_hint=(1,None))
         self.make_plots.bind(on_press = lambda x:self.plots_pressed(self, my_property))
-        grid.add_widget(self.make_plots)
-        
-        self.add_widget(grid)   
+        self.add_widget(self.make_plots)
         
     def clear_summary(self,instance):
         self.purchase_price.text = ''
@@ -460,17 +501,17 @@ class FinancialSummary(GridLayout):
         self.income_to_expense.text = ''
         
     def summary_pressed(self, instance, RentalProperty):
-        self.purchase_price.text = str(round(RentalProperty.purchase_price))
-        self.total_costs.text = str(round(RentalProperty.purchase_price+RentalProperty.closing_costs+RentalProperty.repair_costs))
-        self.loan_amount.text = str(round(RentalProperty.loan_amount))
-        self.mortgage_payment.text=str(round(RentalProperty.mortgage_payment))
-        self.monthly_income.text = str(round(RentalProperty.gross_monthly_income))
-        self.monthly_expenses.text = str(round(RentalProperty.monthly_expenses,2))
-        self.monthly_cashflow.text = str(round(RentalProperty.monthly_cashflow,2))
-        self.cash_needed.text = str(round(RentalProperty.down_payment+RentalProperty.closing_costs+RentalProperty.repair_costs))
-        self.NOI.text = str(round(RentalProperty.net_operating_income))
+        self.purchase_price.text = "${:,.2f}".format(RentalProperty.purchase_price)
+        self.total_costs.text = "${:,.2f}".format(RentalProperty.purchase_price+RentalProperty.closing_costs+RentalProperty.repair_costs)
+        self.loan_amount.text = "${:,.2f}".format(RentalProperty.loan_amount)
+        self.mortgage_payment.text = "${:,.2f}".format(RentalProperty.mortgage_payment)
+        self.monthly_income.text = "${:,.2f}".format(RentalProperty.gross_monthly_income)
+        self.monthly_expenses.text = "${:,.2f}".format(RentalProperty.monthly_expenses)
+        self.monthly_cashflow.text = "${:,.2f}".format(RentalProperty.monthly_cashflow)
+        self.cash_needed.text = "${:,.2f}".format(RentalProperty.down_payment+RentalProperty.closing_costs+RentalProperty.repair_costs)
+        self.NOI.text = "${:,.2f}".format(RentalProperty.net_operating_income)
         self.cash_on_cash.text = str(round(12*RentalProperty.monthly_cashflow/(RentalProperty.down_payment+RentalProperty.closing_costs+RentalProperty.repair_costs)*100,2))+'%'
-        self.monthly_cashflow_50pct.text = str(round(RentalProperty.gross_monthly_income-(0.5*RentalProperty.gross_monthly_income+RentalProperty.mortgage_payment),2))
+        self.monthly_cashflow_50pct.text = "${:,.2f}".format(RentalProperty.gross_monthly_income-(0.5*RentalProperty.gross_monthly_income+RentalProperty.mortgage_payment))
         self.income_to_expense.text = str(round(RentalProperty.gross_monthly_income/RentalProperty.purchase_price*100,2))+'%'
         
     def plots_pressed(self, instance, RentalProperty):
