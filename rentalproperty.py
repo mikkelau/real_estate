@@ -93,24 +93,30 @@ class RentalProperty:
         property_value = ['NaN']*(loan_length+2)
         loan_balance = ['NaN']*(loan_length+2)
         equity = ['NaN']*(loan_length+2)
+        total_rental_profit = ['NaN']*(loan_length+2)
         total_profit = ['NaN']*(loan_length+2)
         for year in range(loan_length+2):
-           property_value[year] = self.property_value*(1+self.annual_percent_appreciation/100)**(year-1)
-           loan_balance[year] = max(0,self.loan_amount*(((1+self.interest_rate/100/12)**(loan_length*12))-
+            property_value[year] = self.property_value*(1+self.annual_percent_appreciation/100)**(year)
+            # same as property_value[year] = property_value[year-1]*(1+self.annual_percent_appreciation/100)
+            
+            loan_balance[year] = max(0,self.loan_amount*(((1+self.interest_rate/100/12)**(loan_length*12))-
                                                                   ((1+self.interest_rate/100/12)**(year*12)))/
                                                                  (((1+self.interest_rate/100/12)**(loan_length*12))-1))
-           equity[year] = property_value[year]-loan_balance[year]
-           if (year == 0):
-               total_profit[year] = 0
-           else:
-               total_profit[year] = total_profit[year-1]+self.annual_cashflow[year]
+            equity[year] = property_value[year]-loan_balance[year]
+            if (year == 0):
+                total_rental_profit[year] = 0
+            else:
+                total_rental_profit[year] = total_rental_profit[year-1]+self.annual_cashflow[year]
+
+            total_profit[year] = total_rental_profit[year]+(property_value[year]-(self.purchase_price+self.closing_costs+self.repair_costs))
         
         # plot stuff
         plt.figure()
         plt.plot([year for year in range(loan_length+2)],property_value, label = 'Property Value')
         plt.plot([year for year in range(loan_length+2)],loan_balance, label = 'Loan Balance')
         plt.plot([year for year in range(loan_length+2)],equity, label = 'Equity')
-        plt.plot([year for year in range(loan_length+2)],total_profit, label = 'Total Rental Profit')
+        plt.plot([year for year in range(loan_length+2)],total_rental_profit, label = 'Total Rental Profit')
+        plt.plot([year for year in range(loan_length+2)],total_profit, label = 'Total Profit')
         plt.legend()
         plt.xlabel('Years Since Purchase')
         plt.ylabel('USD')

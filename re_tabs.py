@@ -46,9 +46,10 @@ class RE_Tabs(TabbedPanel):
     def update_property_taxes(self, instance):
         # Update the monthly property tax text when annual property tax changes
         if self.content_list[0].property_taxes.text == '':
-            self.content_list[1].property_taxes.text = str(round(float(0)))
+            self.content_list[1].property_taxes = 0
         else:
-            self.content_list[1].property_taxes.text = str(round(float(self.content_list[0].property_taxes.text)/12,2))
+            self.content_list[1].property_taxes = float(self.content_list[0].property_taxes.text)/12
+        self.content_list[1].property_taxes_text.text = "${:,.2f}".format(self.content_list[1].property_taxes)
             
         # update estimation of fixed expenses with new property tax value. This also clears cashflow estimate
         self.content_list[1].update_fixed_expenses(self.content_list[1])

@@ -106,48 +106,48 @@ class PropertyInfo(GridLayout):
         self.property_taxes_label = MyLabel(helptext='Typically publicly available on county assessor\'s website')
         self.property_taxes_label.text = 'Annual Property Taxes:'
         left.add_widget(self.property_taxes_label)
-        self.property_taxes = TextInput(multiline=False,text=str(1600.00))
+        self.property_taxes = TextInput(multiline=False,text="{:.2f}".format(1600.00),input_filter='float')
         self.property_taxes.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.property_taxes)
         
         left.add_widget(Label(text='Purchase Price:'))
-        self.purchase_price = TextInput(multiline=False,text=str(300000))
+        self.purchase_price = TextInput(multiline=False,text=str(300000),input_filter='float')
         self.purchase_price.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.purchase_price)
         
         self.property_value_label = MyLabel(helptext='Property may be worth more (or less) than what you paid for it')
         self.property_value_label.text = 'Property Value:'
         left.add_widget(self.property_value_label)
-        self.property_value = TextInput(multiline=False,text=str(300000))
+        self.property_value = TextInput(multiline=False,text=str(300000),input_filter='float')
         self.property_value.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.property_value)
         
         self.closing_costs_label = MyLabel(helptext='Typically $1500-$2500')
         self.closing_costs_label.text = 'Closing Costs:'
         left.add_widget(self.closing_costs_label)
-        self.closing_costs = TextInput(multiline=False,text=str(2000.00))
+        self.closing_costs = TextInput(multiline=False,text=str(2000.00),input_filter='float')
         self.closing_costs.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.closing_costs)
         
         self.repair_costs_label = MyLabel(helptext='Generally properties need some immediate small repairs before renting')
         self.repair_costs_label.text = 'Estimated Repair Costs:'
         left.add_widget(self.repair_costs_label)
-        self.repair_costs = TextInput(multiline=False,text=str(2000.00))
+        self.repair_costs = TextInput(multiline=False,text=str(2000.00),input_filter='float')
         self.repair_costs.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.repair_costs)
         
         left.add_widget(Label(text='Down Payment:'))
-        self.down_payment = TextInput(multiline=False,text=str(20000))
+        self.down_payment = TextInput(multiline=False,text=str(20000),input_filter='float')
         self.down_payment.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.down_payment)
         
         left.add_widget(Label(text='Interest Rate (%):'))
-        self.interest_rate = TextInput(multiline=False,text=str(5.5))
+        self.interest_rate = TextInput(multiline=False,text=str(5.5),input_filter='float')
         self.interest_rate.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.interest_rate)
         
         left.add_widget(Label(text='Amortization Period (years):'))
-        self.amort_period = TextInput(multiline=False,text=str(30))
+        self.amort_period = TextInput(multiline=False,text=str(30),input_filter='float')
         self.amort_period.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.amort_period)
         
@@ -191,9 +191,9 @@ class RentalInfo(GridLayout):
         cost_hint = 0.33
         
         left.add_widget(Label(text='Gross Monthly Rent:'))
-        self.gross_rent = TextInput(multiline=False,text=str(2000))
-        right.add_widget(self.gross_rent)
+        self.gross_rent = TextInput(multiline=False,text=str(2000),input_filter='float')
         self.gross_rent.bind(text=lambda instance, x:self.update_variable_expenses(self))
+        right.add_widget(self.gross_rent)
         
         self.monthly_cashflow = Label()
         
@@ -201,10 +201,10 @@ class RentalInfo(GridLayout):
         self.property_taxes_label = MyLabel(helptext='Previously calculated')
         self.property_taxes_label.text = 'Property Taxes:'
         prop_taxes.add_widget(self.property_taxes_label)
-        self.property_taxes = Label()
-        self.property_taxes.size_hint_x = cost_hint
-        self.property_taxes.bind(text=lambda instance, x:self.update_fixed_expenses(self))
-        prop_taxes.add_widget(self.property_taxes)
+        self.property_taxes_text = Label()
+        self.property_taxes_text.size_hint_x = cost_hint
+        self.property_taxes_text.bind(text=lambda instance, x:self.update_fixed_expenses(self))
+        prop_taxes.add_widget(self.property_taxes_text)
         left.add_widget(prop_taxes)
         right.add_widget(Label())
 
@@ -212,7 +212,7 @@ class RentalInfo(GridLayout):
         self.services_label = MyLabel(helptext='Electricity, Water, Gas, Sewer, Garbage, etc.')
         self.services_label.text = 'Services/Utilities:'
         services.add_widget(self.services_label)
-        self.services_expenses = TextInput(multiline=False,text=str(150))
+        self.services_expenses = TextInput(multiline=False,text=str(150),input_filter='float')
         self.services_expenses.size_hint_x = cost_hint
         self.services_expenses.bind(text=lambda instance, x:self.update_fixed_expenses(self))
         services.add_widget(self.services_expenses)
@@ -221,7 +221,7 @@ class RentalInfo(GridLayout):
         
         hoa = GridLayout(cols=2)
         hoa.add_widget(Label(text='HOA:'))
-        self.hoa_expenses = TextInput(multiline=False,text=str(0))
+        self.hoa_expenses = TextInput(multiline=False,text=str(0),input_filter='float')
         self.hoa_expenses.size_hint_x = cost_hint
         self.hoa_expenses.bind(text=lambda instance, x:self.update_fixed_expenses(self))
         hoa.add_widget(self.hoa_expenses)
@@ -230,7 +230,7 @@ class RentalInfo(GridLayout):
         
         insurance = GridLayout(cols=2)
         insurance.add_widget(Label(text='Home Owner''s Insurance:'))
-        self.home_insurance = TextInput(multiline=False,text=str(100))
+        self.home_insurance = TextInput(multiline=False,text=str(100),input_filter='float')
         self.home_insurance.size_hint_x = cost_hint
         self.home_insurance.bind(text=lambda instance, x:self.update_fixed_expenses(self))
         insurance.add_widget(self.home_insurance)
@@ -241,7 +241,7 @@ class RentalInfo(GridLayout):
         self.other_expenses_label = MyLabel(helptext='Snow removal, lawn care, flood insurance, etc.')
         self.other_expenses_label.text = 'Other:'
         other.add_widget(self.other_expenses_label)
-        self.other_expenses = TextInput(multiline=False,text=str(0))
+        self.other_expenses = TextInput(multiline=False,text=str(0),input_filter='float')
         self.other_expenses.size_hint_x = cost_hint
         self.other_expenses.bind(text=lambda instance, x:self.update_fixed_expenses(self))
         other.add_widget(self.other_expenses)
@@ -260,13 +260,13 @@ class RentalInfo(GridLayout):
         self.vacancy_label = MyLabel(helptext = 'Typically 3-7% of rental income depending on desirability and location')
         self.vacancy_label.text = 'Vacancy (%)'
         vacancy.add_widget(self.vacancy_label)
-        self.vacancy_percentage = TextInput(multiline=False,text=str(5))
+        self.vacancy_percentage = TextInput(multiline=False,text=str(5),input_filter='float')
         self.vacancy_percentage.size_hint_x = percentage_hint
         vacancy.add_widget(self.vacancy_percentage)
-        self.vacancy_cost = Label()
-        self.vacancy_cost.size_hint_x = cost_hint
+        self.vacancy_cost_text = Label()
+        self.vacancy_cost_text.size_hint_x = cost_hint
         self.vacancy_percentage.bind(text=lambda instance, x:self.update_variable_expenses(self))
-        vacancy.add_widget(self.vacancy_cost)
+        vacancy.add_widget(self.vacancy_cost_text)
         left.add_widget(vacancy)
         right.add_widget(Label())
         
@@ -274,13 +274,13 @@ class RentalInfo(GridLayout):
         self.maintenance_label = MyLabel(helptext='Typically 5-10% of rental income depending on age of the unit')
         self.maintenance_label.text = 'Repairs & Maintenance (%)'
         maintenance.add_widget(self.maintenance_label)
-        self.maintenance_percentage = TextInput(multiline=False,text=str(7.5))
+        self.maintenance_percentage = TextInput(multiline=False,text=str(7.5),input_filter='float')
         self.maintenance_percentage.size_hint_x = percentage_hint
         maintenance.add_widget(self.maintenance_percentage)
-        self.maintenance_cost = Label()
-        self.maintenance_cost.size_hint_x = cost_hint
+        self.maintenance_cost_text = Label()
+        self.maintenance_cost_text.size_hint_x = cost_hint
         self.maintenance_percentage.bind(text=lambda instance, x:self.update_variable_expenses(self))
-        maintenance.add_widget(self.maintenance_cost)
+        maintenance.add_widget(self.maintenance_cost_text)
         left.add_widget(maintenance)
         right.add_widget(Label())
         
@@ -288,13 +288,13 @@ class RentalInfo(GridLayout):
         self.capex_label = MyLabel(helptext='Big expenses that need to be saved up for (windows, roof, appliances, plumbing, etc). Typically 5-10% of rental income.')
         self.capex_label.text = 'Capital Expenditures (%)'
         capex.add_widget(self.capex_label)
-        self.capex_percentage = TextInput(multiline=False,text=str(7.5))
+        self.capex_percentage = TextInput(multiline=False,text=str(7.5),input_filter='float')
         self.capex_percentage.size_hint_x = percentage_hint
         capex.add_widget(self.capex_percentage)
-        self.capex_cost = Label()
-        self.capex_cost.size_hint_x = cost_hint
+        self.capex_cost_text = Label()
+        self.capex_cost_text.size_hint_x = cost_hint
         self.capex_percentage.bind(text=lambda instance, x:self.update_variable_expenses(self))
-        capex.add_widget(self.capex_cost)
+        capex.add_widget(self.capex_cost_text)
         left.add_widget(capex)
         right.add_widget(Label())
         
@@ -302,13 +302,13 @@ class RentalInfo(GridLayout):
         self.managementfees_label = MyLabel(helptext='Typically 10% of rental income.')
         self.managementfees_label.text = 'Management Fees (%)'
         managementfees.add_widget(self.managementfees_label)
-        self.managementfees_percentage = TextInput(multiline=False,text=str(10))
+        self.managementfees_percentage = TextInput(multiline=False,text=str(10),input_filter='float')
         self.managementfees_percentage.size_hint_x = percentage_hint
         managementfees.add_widget(self.managementfees_percentage)
-        self.managementfees_cost = Label()
-        self.managementfees_cost.size_hint_x = cost_hint
+        self.managementfees_cost_text = Label()
+        self.managementfees_cost_text.size_hint_x = cost_hint
         self.managementfees_percentage.bind(text=lambda instance, x:self.update_variable_expenses(self))
-        managementfees.add_widget(self.managementfees_cost)
+        managementfees.add_widget(self.managementfees_cost_text)
         left.add_widget(managementfees)
         right.add_widget(Label())
         
@@ -321,15 +321,15 @@ class RentalInfo(GridLayout):
         self.update_variable_expenses(self)
         
         left.add_widget(Label(text='Rent Increase per Year (%):'))
-        self.yearly_rent_increase = TextInput(multiline=False,text=str(2.0))
+        self.yearly_rent_increase = TextInput(multiline=False,text=str(2.0),input_filter='float')
         right.add_widget(self.yearly_rent_increase)
         
         left.add_widget(Label(text='Expense Increase per Year (%):'))
-        self.yearly_expense_increase = TextInput(multiline=False,text=str(2.0))
+        self.yearly_expense_increase = TextInput(multiline=False,text=str(2.0),input_filter='float')
         right.add_widget(self.yearly_expense_increase)
         
         left.add_widget(Label(text='Property Appreciation per Year (%):'))
-        self.yearly_appreciation = TextInput(multiline=False,text=str(2.0))
+        self.yearly_appreciation = TextInput(multiline=False,text=str(2.0),input_filter='float')
         right.add_widget(self.yearly_appreciation)
         
         self.calculate_cashflow = Button(text="Calculate Cashflow")
@@ -342,58 +342,59 @@ class RentalInfo(GridLayout):
         
     def update_variable_expenses(self, instance):
         if (self.vacancy_percentage.text == '') or (self.gross_rent.text == ''):
-            self.vacancy_cost.text = str(round(float(0)))
+            self.vacancy_cost = 0
         else:
-            self.vacancy_cost.text = str(round(float(self.gross_rent.text)*float(self.vacancy_percentage.text)/100))
+            self.vacancy_cost = float(self.gross_rent.text)*float(self.vacancy_percentage.text)/100
+        self.vacancy_cost_text.text = "${:,.2f}".format(self.vacancy_cost)
             
         if (self.maintenance_percentage.text == '') or (self.gross_rent.text == ''):
-            self.maintenance_cost.text = str(round(float(0)))
+            self.maintenance_cost = 0
         else:
-            self.maintenance_cost.text = str(round(float(self.gross_rent.text)*float(self.maintenance_percentage.text)/100))
+            self.maintenance_cost = float(self.gross_rent.text)*float(self.maintenance_percentage.text)/100
+        self.maintenance_cost_text.text = "${:,.2f}".format(self.maintenance_cost)
             
         if (self.capex_percentage.text == '') or (self.gross_rent.text == ''):
-            self.capex_cost.text = str(round(float(0)))
+            self.capex_cost = 0
         else:
-            self.capex_cost.text = str(round(float(self.gross_rent.text)*float(self.capex_percentage.text)/100))
+            self.capex_cost = float(self.gross_rent.text)*float(self.capex_percentage.text)/100
+        self.capex_cost_text.text = "${:,.2f}".format(self.capex_cost)
             
         if (self.managementfees_percentage.text == '') or (self.gross_rent.text == ''):
-            self.managementfees_cost.text = str(round(float(0)))
+            self.managementfees_cost = 0
         else:
-            self.managementfees_cost.text = str(round(float(self.gross_rent.text)*float(self.managementfees_percentage.text)/100))
+            self.managementfees_cost = float(self.gross_rent.text)*float(self.managementfees_percentage.text)/100
+        self.managementfees_cost_text.text = "${:,.2f}".format(self.managementfees_cost)
             
-        self.total_variable_expenses.text =  "${:,.2f}".format(sum([float(self.vacancy_cost.text), float(self.maintenance_cost.text),
-                                                            float(self.capex_cost.text), float(self.managementfees_cost.text)]))
+        self.total_variable_expenses.text =  "${:,.2f}".format(sum([self.vacancy_cost, self.maintenance_cost,
+                                                            self.capex_cost, self.managementfees_cost]))
         self.monthly_cashflow.text = ''
         
     def update_fixed_expenses(self, instance):
         if (self.services_expenses.text == ''):
             self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.hoa_expenses.text),float(self.home_insurance.text), 
-                                                            float(self.property_taxes.text),float(self.other_expenses.text)]))
+                                                            self.property_taxes,float(self.other_expenses.text)]))
         elif (self.hoa_expenses.text == ''):
             self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text),float(self.home_insurance.text), 
-                                                            float(self.property_taxes.text),float(self.other_expenses.text)]))
+                                                            self.property_taxes,float(self.other_expenses.text)]))
         elif (self.home_insurance.text == ''):
             self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text),float(self.hoa_expenses.text), 
-                                                            float(self.property_taxes.text),float(self.other_expenses.text)]))
-        elif (self.property_taxes.text == ''):
+                                                            self.property_taxes,float(self.other_expenses.text)]))
+        elif (self.property_taxes_text.text == ''):
             self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text),float(self.hoa_expenses.text), 
                                                             float(self.home_insurance.text),float(self.other_expenses.text)]))
         elif (self.other_expenses.text == ''):
             self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text),float(self.hoa_expenses.text), 
-                                                            float(self.home_insurance.text),float(self.property_taxes.text)]))
+                                                            float(self.home_insurance.text),self.property_taxes]))
         else:
             self.total_fixed_expenses.text = "${:,.2f}".format(sum([float(self.services_expenses.text), float(self.hoa_expenses.text),
-                                                            float(self.home_insurance.text), float(self.property_taxes.text),
-                                                            float(self.other_expenses.text)]))
+                                                            float(self.home_insurance.text), self.property_taxes, float(self.other_expenses.text)]))
         self.monthly_cashflow.text = ''
         
     def calculate_cashflow_pressed(self, instance, RentalProperty):
         RentalProperty.gross_monthly_income = float(self.gross_rent.text)
         RentalProperty.fixed_landlord_expenses = sum([float(self.services_expenses.text), float(self.hoa_expenses.text),
-                                                      float(self.home_insurance.text),float(self.property_taxes.text),
-                                                      float(self.other_expenses.text)])
-        RentalProperty.variable_landlord_expenses = sum([float(self.vacancy_cost.text), float(self.maintenance_cost.text),
-                                                         float(self.capex_cost.text), float(self.managementfees_cost.text)])
+                                                      float(self.home_insurance.text),self.property_taxes, float(self.other_expenses.text)])
+        RentalProperty.variable_landlord_expenses = sum([self.vacancy_cost, self.maintenance_cost, self.capex_cost, self.managementfees_cost])
         RentalProperty.annual_percent_rent_increase = float(self.yearly_rent_increase.text)
         RentalProperty.annual_percent_expense_increase = float(self.yearly_expense_increase.text)
         RentalProperty.annual_percent_appreciation = float(self.yearly_appreciation.text)
