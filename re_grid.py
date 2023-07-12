@@ -485,10 +485,6 @@ class FinancialSummary(GridLayout):
         self.make_summary.bind(on_press = lambda x:self.summary_pressed(self, my_property))
         self.add_widget(self.make_summary)
         
-        self.make_plots = Button(text="Generate Plots!", font_size=20, size_hint=(1,0.15))
-        self.make_plots.bind(on_press = lambda x:self.plots_pressed(self, my_property))
-        self.add_widget(self.make_plots)
-        
     def clear_summary(self,instance):
         self.purchase_price.text = ''
         self.total_costs.text = ''
@@ -517,10 +513,6 @@ class FinancialSummary(GridLayout):
         self.monthly_cashflow_50pct.text = "${:,.2f}".format(RentalProperty.gross_monthly_income-(0.5*RentalProperty.gross_monthly_income+RentalProperty.mortgage_payment))
         self.income_to_expense.text = str(round(RentalProperty.gross_monthly_income/RentalProperty.purchase_price*100,2))+'%'
         
-    def plots_pressed(self, instance, RentalProperty):
-        RentalProperty.plot_income()
-        RentalProperty.plot_equity()
-        plt.show()
 
 class PlotsTab(GridLayout):
     def __init__(self, my_property, **kwargs):
@@ -530,13 +522,7 @@ class PlotsTab(GridLayout):
         self.spacing = 10
         self.padding = 10
         
-        self.plots = GridLayout(cols=1, size_hint=(1,None),size=(Window.width, 2*Window.height), spacing=10, padding=10)        
-        
-        self.fig1 = GridLayout(cols=1)
-        self.plots.add_widget(self.fig1)
-        
-        self.fig2 = GridLayout(cols=1)
-        self.plots.add_widget(self.fig2)
+        self.plots = GridLayout(cols=1, size_hint=(1,None),size=(Window.width, 2*Window.height*0.85), spacing=10, padding=10)
         
         self.scroll = ScrollView()
         self.scroll.add_widget(self.plots)
@@ -547,13 +533,14 @@ class PlotsTab(GridLayout):
         self.add_widget(self.make_plots)
     
     def plots_pressed(self, instance, RentalProperty):
-        RentalProperty.plot_income()
-        self.fig1.clear_widgets()
-        self.fig1.add_widget(FigureCanvasKivyAgg(plt.gcf()))
         
-        RentalProperty.plot_equity()
-        self.fig2.clear_widgets()
-        self.fig2.add_widget(FigureCanvasKivyAgg(plt.gcf()))        
+        self.plots.clear_widgets()
+        
+        RentalProperty.plot_income()
+        self.plots.add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        
+        RentalProperty.plot_equity()       
+        self.plots.add_widget(FigureCanvasKivyAgg(plt.gcf()))        
         
 
 class RentalInfoSimple(GridLayout):
