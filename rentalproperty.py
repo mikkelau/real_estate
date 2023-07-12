@@ -82,7 +82,7 @@ class RentalProperty:
         plt.plot([year for year in range(loan_length+2)],gross_income, label = 'Gross Income')
         plt.plot([year for year in range(loan_length+2)],total_expenses, label = 'Total Expenses')
         plt.plot([year for year in range(loan_length+2)],self.annual_cashflow, label = 'Cashflow')
-        plt.plot([year for year in range(loan_length+2)],NOI, label = 'Net Operating Income (NOI)')
+        plt.plot([year for year in range(loan_length+2)],NOI, label = 'Net Operating Income')
         plt.legend()
         plt.xlabel('Years Since Purchase')
         plt.ylabel('USD')

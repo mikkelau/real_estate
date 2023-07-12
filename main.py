@@ -9,7 +9,7 @@ from kivy.core.window import Window
 from re_grid import RE_Grid  
 from re_tabs import RE_Tabs
 
-Window.size = (400, Window.size[1])
+# Window.size = (400, Window.size[1])
         
 class RE_App(App):
     def build(self):

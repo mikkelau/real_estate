@@ -5,7 +5,7 @@ Created on Wed Jun 21 07:40:18 2023
 @author: mikke
 """
 from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
-from re_grid import PropertyInfo, FinancialSummary
+from re_grid import PropertyInfo, FinancialSummary, PlotsTab
 # from re_grid import RentalInfoSimple as RentalInfo
 from re_grid import RentalInfo
 from rentalproperty import RentalProperty
@@ -22,11 +22,11 @@ class RE_Tabs(TabbedPanel):
         my_property = RentalProperty()
         
         # make some lists
-        name_list = ['Property/Loan Info', 'Rental Info', 'Financials & Plots']
-        self.content_list = [PropertyInfo(my_property), RentalInfo(my_property), FinancialSummary(my_property)]
-        tabs = [None]*3
+        name_list = ['Property/Loan Info', 'Rental Info', 'Financials Summary', 'Plots']
+        self.content_list = [PropertyInfo(my_property), RentalInfo(my_property), FinancialSummary(my_property), PlotsTab(my_property)]
+        tabs = [None]*len(name_list)
         
-        for i in range(len(tabs)):
+        for i in range(len(name_list)):
             tabs[i] = TabbedPanelItem(text=name_list[i])
             tabs[i].padding = (10,0)
             tabs[i].texture_update()
