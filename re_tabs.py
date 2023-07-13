@@ -39,6 +39,7 @@ class RE_Tabs(TabbedPanel):
         self.update_property_taxes(self)
         
         self.content_list[1].monthly_cashflow.bind(text=lambda instance, x:self.content_list[2].clear_summary(self.content_list[2]))
+        self.content_list[1].monthly_cashflow.bind(text=lambda instance, x:self.content_list[3].clear_plots(self.content_list[3]))
 
         for tab in tabs:
             self.add_widget(tab)

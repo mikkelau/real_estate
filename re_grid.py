@@ -540,8 +540,10 @@ class PlotsTab(GridLayout):
         self.plots.add_widget(FigureCanvasKivyAgg(plt.gcf()))
         
         RentalProperty.plot_equity()       
-        self.plots.add_widget(FigureCanvasKivyAgg(plt.gcf()))        
+        self.plots.add_widget(FigureCanvasKivyAgg(plt.gcf()))    
         
+    def clear_plots(self, instance):
+        self.plots.clear_widgets()
 
 class RentalInfoSimple(GridLayout):
     def __init__(self, my_property, **kwargs):
