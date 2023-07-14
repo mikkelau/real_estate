@@ -153,14 +153,14 @@ class PropertyInfo(GridLayout):
         self.amort_period.bind(text=lambda instance, x:self.clear_mortgage(self))
         right.add_widget(self.amort_period)
         
-        self.calculate_mortgage = Button(text="Calculate Mortgage")
-        self.mortgage_payment = Label()
-        self.calculate_mortgage.bind(on_press = lambda x:self.calculate_mortgage_pressed(self, my_property))
-        left.add_widget(self.calculate_mortgage)
-        right.add_widget(self.mortgage_payment)
-        
         self.add_widget(left)
         self.add_widget(right)
+
+        self.calculate_mortgage = Button(text="Calculate Mortgage", font_size='20sp', size_hint=(1,0.15))
+        self.mortgage_payment = Label(size_hint=(0.25,0.15))
+        self.calculate_mortgage.bind(on_press = lambda x:self.calculate_mortgage_pressed(self, my_property))
+        self.add_widget(self.calculate_mortgage)
+        self.add_widget(self.mortgage_payment)
     
     def clear_mortgage(self, instance):
         self.mortgage_payment.text = ''
@@ -197,7 +197,7 @@ class RentalInfo(GridLayout):
         self.gross_rent.bind(text=lambda instance, x:self.update_variable_expenses(self))
         right.add_widget(self.gross_rent)
         
-        self.monthly_cashflow = Label()
+        self.monthly_cashflow = Label(size_hint=(0.25,0.15))
         
         prop_taxes = GridLayout(cols=2)
         self.property_taxes_label = MyLabel(helptext='Previously calculated')
@@ -334,13 +334,14 @@ class RentalInfo(GridLayout):
         self.yearly_appreciation = TextInput(multiline=False,text=str(2.0),input_filter='float')
         right.add_widget(self.yearly_appreciation)
         
-        self.calculate_cashflow = Button(text="Calculate Cashflow")
-        self.calculate_cashflow.bind(on_press = lambda x:self.calculate_cashflow_pressed(self, my_property))
-        left.add_widget(self.calculate_cashflow)
-        right.add_widget(self.monthly_cashflow)
-        
         self.add_widget(left)
         self.add_widget(right)
+        
+        self.calculate_cashflow = Button(text="Calculate Cashflow", font_size='20sp', size_hint=(1,0.15))
+        self.calculate_cashflow.bind(on_press = lambda x:self.calculate_cashflow_pressed(self, my_property))
+        self.add_widget(self.calculate_cashflow)
+        self.add_widget(self.monthly_cashflow)
+        
         
     def update_variable_expenses(self, instance):
         if (self.vacancy_percentage.text == '') or (self.gross_rent.text == ''):
@@ -481,7 +482,7 @@ class FinancialSummary(GridLayout):
         self.add_widget(grid)
 
         # add buttons        
-        self.make_summary = Button(text="Generate Financial Summary!", font_size=20, size_hint=(1,0.15))
+        self.make_summary = Button(text="Generate Financial Summary!", font_size='20sp', size_hint=(1,0.15))
         self.make_summary.bind(on_press = lambda x:self.summary_pressed(self, my_property))
         self.add_widget(self.make_summary)
         
@@ -527,12 +528,18 @@ class PlotsTab(GridLayout):
         self.scroll = ScrollView()
         self.scroll.add_widget(self.plots)
         
-        self.make_plots = Button(text="Generate Plots!", font_size=20, size_hint=(1,0.15))
+        self.make_plots = Button(text="Generate Plots!", font_size='20sp', size_hint=(1,0.15))
         self.make_plots.bind(on_press = lambda x:self.plots_pressed(self, my_property))
         self.add_widget(self.scroll)
         self.add_widget(self.make_plots)
     
     def plots_pressed(self, instance, RentalProperty):
+        
+        plt.rc('font', weight='bold')    # controls default text
+        plt.rc('axes', labelsize=14, labelweight='bold')    # fontsize of the x and y labels
+        plt.rc('xtick', labelsize=14)    # fontsize of the tick labels
+        plt.rc('ytick', labelsize=14)    # fontsize of the tick labels
+        # plt.rc('legend', fontsize=12)    # legend fontsize
         
         self.plots.clear_widgets()
         
@@ -540,7 +547,7 @@ class PlotsTab(GridLayout):
         self.plots.add_widget(FigureCanvasKivyAgg(plt.gcf()))
         
         RentalProperty.plot_equity()       
-        self.plots.add_widget(FigureCanvasKivyAgg(plt.gcf()))    
+        self.plots.add_widget(FigureCanvasKivyAgg(plt.gcf()))
         
     def clear_plots(self, instance):
         self.plots.clear_widgets()

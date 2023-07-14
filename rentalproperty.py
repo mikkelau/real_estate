@@ -78,15 +78,21 @@ class RentalProperty:
             NOI[year] = gross_income[year]-operating_expenses[year]
             
         # plot stuff
-        plt.figure()
-        plt.plot([year for year in range(loan_length+2)],gross_income, label = 'Gross Income')
-        plt.plot([year for year in range(loan_length+2)],total_expenses, label = 'Total Expenses')
-        plt.plot([year for year in range(loan_length+2)],self.annual_cashflow, label = 'Cashflow')
-        plt.plot([year for year in range(loan_length+2)],NOI, label = 'Net Operating Income')
-        plt.legend()
+        fig, ax = plt.subplots(1,1)
+        ax.plot([year for year in range(loan_length+2)],[i/1000 for i in gross_income], label = 'Gross Income')
+        ax.plot([year for year in range(loan_length+2)],[i/1000 for i in total_expenses], label = 'Total Expenses')
+        ax.plot([year for year in range(loan_length+2)],[i/1000 for i in self.annual_cashflow], label = 'Cashflow')
+        ax.plot([year for year in range(loan_length+2)],[i/1000 for i in NOI], label = 'Net Operating Income')
+        
+        # format ytick labels
+        labels = [item.get_text() for item in ax.get_yticklabels()]
+        labels = ['$'+label+'k' for label in labels]
+        ax.set_yticks(ax.get_yticks().tolist()) # this line is unnecessary but prevents a warning
+        ax.set_yticklabels(labels)
+        
+        ax.legend()
         plt.xlabel('Years Since Purchase')
-        plt.ylabel('USD')
-        plt.grid()
+        ax.grid()
         
     def plot_equity(self):
         loan_length = self.amortization_period
@@ -111,13 +117,19 @@ class RentalProperty:
             total_profit[year] = total_rental_profit[year]+(property_value[year]-(self.purchase_price+self.closing_costs+self.repair_costs))
         
         # plot stuff
-        plt.figure()
-        plt.plot([year for year in range(loan_length+2)],property_value, label = 'Property Value')
-        plt.plot([year for year in range(loan_length+2)],loan_balance, label = 'Loan Balance')
-        plt.plot([year for year in range(loan_length+2)],equity, label = 'Equity')
-        plt.plot([year for year in range(loan_length+2)],total_rental_profit, label = 'Total Rental Profit')
-        plt.plot([year for year in range(loan_length+2)],total_profit, label = 'Total Profit')
-        plt.legend()
+        fig, ax = plt.subplots(1,1)
+        ax.plot([year for year in range(loan_length+2)],[i/1000 for i in property_value], label = 'Property Value')
+        ax.plot([year for year in range(loan_length+2)],[i/1000 for i in loan_balance], label = 'Loan Balance')
+        ax.plot([year for year in range(loan_length+2)],[i/1000 for i in equity], label = 'Equity')
+        ax.plot([year for year in range(loan_length+2)],[i/1000 for i in total_rental_profit], label = 'Total Rental Profit')
+        ax.plot([year for year in range(loan_length+2)],[i/1000 for i in total_profit], label = 'Total Profit')
+        
+        # format ytick labels
+        labels = [item.get_text() for item in ax.get_yticklabels()]
+        labels = ['$'+label+'k' for label in labels]
+        ax.set_yticks(ax.get_yticks().tolist()) # this line is unnecessary but prevents a warning
+        ax.set_yticklabels(labels)
+        
+        ax.legend()
         plt.xlabel('Years Since Purchase')
-        plt.ylabel('USD')
-        plt.grid()
+        ax.grid()
